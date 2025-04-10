@@ -1,0 +1,27 @@
+# Ignore Python virtual environment
+venv/
+
+# Ignore environment variable files
+.env
+
+# Ignore database files
+*.db
+
+# Ignore video/media files
+*.mp4
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore logs
+*.log
+
+node_modules/
+

@@ -1,0 +1,2185 @@
+Multi-Agent E-Commerce Recommendation System
+ Comprehensive Solution Guide
+ Table of Contents
+ 1. 
+2. 
+3. 
+4. 
+5. 
+6. 
+Overview
+ System Architecture
+ Database Design
+ Agent Framework
+ Recommendation Algorithms
+ Implementation Details
+ 7. 
+Workflow Processes
+ 8. 
+Evaluation Framework
+ 9. 
+Deployment Guidelines
+ 10. 
+Future Enhancements
+ Overview
+ This document outlines a comprehensive solution for a multi-agent AI system that delivers hyper
+personalized product recommendations for e-commerce platforms. The system replaces manual 
+customer segmentation and recommendation processes with an intelligent, automated approach 
+that adapts to individual customer behaviors and preferences in real-time.
+ Problem Statement
+ In the competitive world of e-commerce, providing personalized and relevant product 
+recommendations is key to improving customer experience, increasing conversion rates, and 
+boosting sales. This solution addresses the challenges of:
+ Replacing manual customer segmentation with dynamic, AI-driven profiling
+ Moving from broad category-based recommendations to truly personalized suggestions
+ Creating a system that continuously learns and improves based on customer interactions
+ Business Objectives
+ Improve customer engagement and satisfaction
+ Increase average order value (AOV)
+ Enhance customer retention rates
+ Drive higher conversion rates
+ Maximize revenue per customer
+ System Architecture
+ The system follows a multi-tier architecture that separates data storage, business logic, agent 
+communication, and external interfaces:
+┌─────────────────────────────────────────────────────────────────┐ ┌─────────────────────────────────────────────────────────────────┐
+ │                       E-Commerce Platform                        │ │                       E-Commerce Platform                        │
+ └───────────────────────────────┬─────────────────────────────────┘ └───────────────────────────────┬─────────────────────────────────┘
+                                │                                │
+ ┌───────────────────────────────▼─────────────────────────────────┐ ┌───────────────────────────────▼─────────────────────────────────┐
+ │                            API Layer                             │ │                            API Layer                             │
+ └───────────────────────────────┬─────────────────────────────────┘ └───────────────────────────────┬─────────────────────────────────┘
+                                │                                │
+ ┌───────────────────────────────▼─────────────────────────────────┐ ┌───────────────────────────────▼─────────────────────────────────┐
+ │                       Coordinator Agent                          │ │                       Coordinator Agent                          │
+ └───┬─────────────────┬──────────────────┬─────────────────┬──────┘ └───┬─────────────────┬──────────────────┬─────────────────┬──────┘
+    │                 │                  │                 │    │                 │                  │                 │
+ ┌───▼─────┐      ┌───▼─────┐      ┌─────▼─────┐      ┌────▼────┐ ┌───▼─────┐      ┌───▼─────┐      ┌─────▼─────┐      ┌────▼────┐
+ │ Customer │      │ Product  │      │    Recom.  │      │ Feedback │ │ Customer │      │ Product  │      │    Recom.  │      │ Feedback │
+ │  Agent   │      │  Agent   │      │    Agent   │      │  Agent   │ │  Agent   │      │  Agent   │      │    Agent   │      │  Agent   │
+ └───┬─────┘      └───┬─────┘      └─────┬─────┘      └────┬────┘ └───┬─────┘      └───┬─────┘      └─────┬─────┘      └────┬────┘
+    │                 │                  │                 │    │                 │                  │                 │
+    └─────────────────┼──────────────────┼─────────────────┘    └─────────────────┼──────────────────┼─────────────────┘
+                      │                  │                      │                  │
+ ┌─────────────────────▼──────────────────▼─────────────────────────┐ ┌─────────────────────▼──────────────────▼─────────────────────────┐
+ │                       Algorithm Layer                             │ │                       Algorithm Layer                             │
+ │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌──────────┐ │ │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌──────────┐ │
+ │  │Collaborative│  │Content-based│  │ Sequential  │  │  Hybrid  │ │ │  │Collaborative│  │Content-based│  │ Sequential  │  │  Hybrid  │ │
+ │  │  Filtering  │  │  Filtering  │  │   Pattern   │  │Approaches│ │ │  │  Filtering  │  │  Filtering  │  │   Pattern   │  │Approaches│ │
+ │  └─────────────┘  └─────────────┘  └─────────────┘  └──────────┘ │ │  └─────────────┘  └─────────────┘  └─────────────┘  └──────────┘ │
+ └─────────────────────────────────────────────────────────────────┘ └─────────────────────────────────────────────────────────────────┘
+                      │                  │                      │                  │
+ ┌─────────────────────▼──────────────────▼─────────────────────────┐ ┌─────────────────────▼──────────────────▼─────────────────────────┐
+ │                      Database Layer                               │ │                      Database Layer                               │
+ │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌──────────┐ │ │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌──────────┐ │
+ Copy
+│  │  Customer   │  │   Product   │  │ Interaction │  │    ML    │ │
+ │  │  Customer   │  │   Product   │  │ Interaction │  │    ML    │ │
+ │  │    Data     │  │    Data     │  │     Data    │  │  Models  │ │
+ │  │    Data     │  │    Data     │  │     Data    │  │  Models  │ │
+ │  └─────────────┘  └─────────────┘  └─────────────┘  └──────────┘ │
+ │  └─────────────┘  └─────────────┘  └─────────────┘  └──────────┘ │
+ └─────────────────────────────────────────────────────────────────┘
+ └─────────────────────────────────────────────────────────────────┘
+ Key Components
+ 1. Database Layer: SQLite implementation for persistent storage of all data
+ 2. Algorithm Layer: ML models and recommendation algorithms
+ 3. Agent Framework: Specialized AI agents with distinct responsibilities
+ 4. API Layer: Integration points for the e-commerce platform
+ Database Design
+ The SQLite database schema is designed to capture all necessary data for personalized 
+recommendations while maintaining query efficiency.
+ Core Tables
+-- Core tables for customers, products, interactions-- Core tables for customers, products, interactions
+ CREATE CREATE  TABLE TABLE customers  customers ( (
+    customer_id     customer_id INTEGER INTEGER  PRIMARY PRIMARY  KEY KEY, ,
+    name     name TEXT TEXT, ,  
+    email     email TEXT TEXT  UNIQUE UNIQUE, ,
+    demographics JSON    demographics JSON, ,    -- Structured data for age, gender, location, etc.-- Structured data for age, gender, location, etc.
+    registration_date     registration_date TIMESTAMP TIMESTAMP, ,
+    last_active     last_active TIMESTAMP TIMESTAMP
+ ) ); ;
+ CREATE CREATE  TABLE TABLE products  products ( (
+    product_id     product_id INTEGER INTEGER  PRIMARY PRIMARY  KEY KEY, ,
+    name     name TEXT TEXT, ,
+    description     description TEXT TEXT, ,
+    category     category TEXT TEXT, ,
+    subcategory     subcategory TEXT TEXT, ,
+    price     price REAL REAL, ,
+    attributes JSON    attributes JSON, ,    -- Structured data for features, specs, etc.-- Structured data for features, specs, etc.
+    tags     tags TEXT TEXT, ,
+    image_urls JSON    image_urls JSON, ,
+    inventory_status     inventory_status TEXT TEXT
+ ) ); ;-- Interaction tracking tables-- Interaction tracking tables
+ CREATE CREATE  TABLE TABLE browsing_history  browsing_history ( (
+    id     id INTEGER INTEGER  PRIMARY PRIMARY  KEY KEY, ,
+    customer_id     customer_id INTEGER INTEGER, ,
+    product_id     product_id INTEGER INTEGER, ,
+    view_time     view_time TIMESTAMP TIMESTAMP, ,
+    duration_seconds     duration_seconds INTEGER INTEGER, ,
+ sql Copy
+    page_actions JSON    page_actions JSON, ,    -- Tracks scrolling, clicks, etc.-- Tracks scrolling, clicks, etc.
+        FOREIGN FOREIGN  KEY KEY  ( (customer_id customer_id) )  REFERENCES REFERENCES customers customers( (customer_id customer_id) ), ,
+        FOREIGN FOREIGN  KEY KEY  ( (product_id product_id) )  REFERENCES REFERENCES products products( (product_id product_id) )
+ ) ); ;
+ CREATE CREATE  TABLE TABLE purchases  purchases ( (
+    purchase_id     purchase_id INTEGER INTEGER  PRIMARY PRIMARY  KEY KEY, ,
+    customer_id     customer_id INTEGER INTEGER, ,
+        timestamp timestamp  TIMESTAMP TIMESTAMP, ,
+    total_amount     total_amount REAL REAL, ,
+    items JSON    items JSON, ,    -- List of product_ids and quantities-- List of product_ids and quantities
+        FOREIGN FOREIGN  KEY KEY  ( (customer_id customer_id) )  REFERENCES REFERENCES customers customers( (customer_id customer_id) )
+ ) ); ;-- Recommendation related tables-- Recommendation related tables
+ CREATE CREATE  TABLE TABLE recommendations  recommendations ( (
+    id     id INTEGER INTEGER  PRIMARY PRIMARY  KEY KEY, ,
+    customer_id     customer_id INTEGER INTEGER, ,
+    product_id     product_id INTEGER INTEGER, ,
+    score     score REAL REAL, ,
+        algorithm algorithm  TEXT TEXT, ,
+    generated_at     generated_at TIMESTAMP TIMESTAMP, ,
+    was_shown     was_shown BOOLEAN BOOLEAN, ,
+    was_clicked     was_clicked BOOLEAN BOOLEAN, ,
+        FOREIGN FOREIGN  KEY KEY  ( (customer_id customer_id) )  REFERENCES REFERENCES customers customers( (customer_id customer_id) ), ,
+        FOREIGN FOREIGN  KEY KEY  ( (product_id product_id) )  REFERENCES REFERENCES products products( (product_id product_id) )
+ ) ); ;
+ CREATE CREATE  TABLE TABLE customer_embeddings  customer_embeddings ( (
+    customer_id     customer_id INTEGER INTEGER  PRIMARY PRIMARY  KEY KEY, ,
+    embedding     embedding BLOB BLOB, ,    -- Vector representation of customer preferences-- Vector representation of customer preferences
+    last_updated     last_updated TIMESTAMP TIMESTAMP, ,
+        FOREIGN FOREIGN  KEY KEY  ( (customer_id customer_id) )  REFERENCES REFERENCES customers customers( (customer_id customer_id) )
+) ); ;
+ CREATE CREATE  TABLE TABLE product_embeddings  product_embeddings ( (
+    product_id     product_id INTEGER INTEGER  PRIMARY PRIMARY  KEY KEY, ,
+    embedding     embedding BLOB BLOB, ,    -- Vector representation of product attributes-- Vector representation of product attributes
+    last_updated     last_updated TIMESTAMP TIMESTAMP, ,
+        FOREIGN FOREIGN  KEY KEY  ( (product_id product_id) )  REFERENCES REFERENCES products products( (product_id product_id) )
+ ) ); ;
+ CREATE CREATE  TABLE TABLE cart_items  cart_items ( (
+    id     id INTEGER INTEGER  PRIMARY PRIMARY  KEY KEY, ,
+    customer_id     customer_id INTEGER INTEGER, ,
+    product_id     product_id INTEGER INTEGER, ,
+    quantity     quantity INTEGER INTEGER, ,
+    added_timestamp     added_timestamp TIMESTAMP TIMESTAMP, ,
+    purchased     purchased BOOLEAN BOOLEAN  DEFAULT DEFAULT  0 0, ,
+        FOREIGN FOREIGN  KEY KEY  ( (customer_id customer_id) )  REFERENCES REFERENCES customers customers( (customer_id customer_id) ), ,
+        FOREIGN FOREIGN  KEY KEY  ( (product_id product_id) )  REFERENCES REFERENCES products products( (product_id product_id) )
+ ) ); ;
+ CREATE CREATE  TABLE TABLE customer_segments  customer_segments ( (
+    id     id INTEGER INTEGER  PRIMARY PRIMARY  KEY KEY, ,
+    segment_name     segment_name TEXT TEXT, ,
+    segment_criteria JSON    segment_criteria JSON, ,
+    created_at     created_at TIMESTAMP TIMESTAMP
+ ) ); ;
+ CREATE CREATE  TABLE TABLE customer_segment_memberships  customer_segment_memberships ( (
+    id     id INTEGER INTEGER  PRIMARY PRIMARY  KEY KEY, ,
+    customer_id     customer_id INTEGER INTEGER, ,
+    segment_id     segment_id INTEGER INTEGER, ,
+    confidence_score     confidence_score REAL REAL, ,
+        FOREIGN FOREIGN  KEY KEY  ( (customer_id customer_id) )  REFERENCES REFERENCES customers customers( (customer_id customer_id) ), ,
+FOREIGN
+ FOREIGN  KEY
+ KEY  ( (segment_id
+ segment_id) )  REFERENCES
+ )
+ ); ;
+ Database Manager Class
+ REFERENCES customer_segments
+ customer_segments( (id
+ id) )
+class class  DatabaseManager DatabaseManager: :
+        def def  __init__ __init__( (self self, , db_path db_path= ='ecommerce.db' 'ecommerce.db') ): :
+        self        self. .conn conn = = sqlite3 sqlite3. .connect connect( (db_path db_path, , check_same_thread check_same_thread= =False False) )
+        self        self. .conn conn. .row_factory row_factory = = sqlite3 sqlite3. .Row Row
+        
+        def def  setup_database setup_database( (self self) ): :
+                """Create all tables if they don't exist""" """Create all tables if they don't exist"""
+                # Implementation of all CREATE TABLE statements # Implementation of all CREATE TABLE statements
+                
+        def def  add_customer add_customer( (self self, , customer_data customer_data) ): :
+                """Add a new customer to the database""" """Add a new customer to the database"""
+                # Implementation # Implementation
+                
+        def def  add_product add_product( (self self, , product_data product_data) ): :
+                """Add a new product to the database""" """Add a new product to the database"""
+                # Implementation # Implementation
+                
+        def def  log_browsing_event log_browsing_event( (self self, , customer_id customer_id, , product_id product_id, , duration duration, , actions actions) ): :
+                """Record a product browsing event""" """Record a product browsing event"""
+                # Implementation # Implementation
+                
+        def def  log_purchase log_purchase( (self self, , customer_id customer_id, , items items, , total_amount total_amount) ): :
+                """Record a customer purchase""" """Record a customer purchase"""
+                # Implementation # Implementation
+                
+        def def  update_customer_embedding update_customer_embedding( (self self, , customer_id customer_id, , embedding embedding) ): :
+                """Update the vector representation of a customer""" """Update the vector representation of a customer"""
+                # Implementation # Implementation
+                
+        def def  get_customer_profile get_customer_profile( (self self, , customer_id customer_id) ): :
+ python Copy
+"""Get complete customer profile with history and preferences"""
+ """Get complete customer profile with history and preferences"""
+ # Implementation
+ # Implementation
+ def
+ def  get_similar_products
+ get_similar_products( (self
+ self, , product_id
+ product_id, , limit
+ 10) ): :
+ """Find similar products based on embeddings"""
+ limit= =10
+ """Find similar products based on embeddings"""
+ # Implementation
+ # Implementation
+ def
+ def  log_recommendations
+ log_recommendations( (self
+ self, , customer_id
+ customer_id, , recommendations
+ recommendations, , algorithm
+ algorithm) ): :
+ """Record recommendations made to a customer"""
+ """Record recommendations made to a customer"""
+ # Implementation
+ # Implementation
+ def
+ def  update_recommendation_feedback
+ update_recommendation_feedback( (self
+ self, , recommendation_id
+ recommendation_id, , clicked
+ purchased) ): :
+ """Update whether a recommendation was clicked or led to purchase"""
+ clicked, , purchased
+ """Update whether a recommendation was clicked or led to purchase"""
+ # Implementation
+ # Implementation
+ Agent Framework
+ The multi-agent system consists of five specialized agents, each with distinct responsibilities and 
+capabilities.
+ 1. Customer Profile Agent
+class class  CustomerProfileAgent CustomerProfileAgent: :
+        def def  __init__ __init__( (self self, , db_manager db_manager) ): :
+        self        self. .db_manager db_manager = = db_manager db_manager
+        self        self. .model model = = CustomerEmbeddingModel CustomerEmbeddingModel( () )
+                
+        def def  analyze_customer analyze_customer( (self self, , customer_id customer_id) ): :
+                """Generate or update customer profile and preferences""" """Generate or update customer profile and preferences"""
+                # Fetch customer interaction data # Fetch customer interaction data
+        browsing_history         browsing_history = = self self. .db_manager db_manager. .get_browsing_history get_browsing_history( (customer_id customer_id) )
+        purchase_history         purchase_history = = self self. .db_manager db_manager. .get_purchase_history get_purchase_history( (customer_id customer_id) )
+        cart_history         cart_history = = self self. .db_manager db_manager. .get_cart_history get_cart_history( (customer_id customer_id) )
+                
+                # Process and create embeddings # Process and create embeddings
+        embedding         embedding = = self self. .model model. .create_embedding create_embedding( (
+            browsing_history            browsing_history, ,  
+            purchase_history            purchase_history, ,
+            cart_history            cart_history
+                ) )
+                
+                # Store updated embedding # Store updated embedding
+        self        self. .db_manager db_manager. .update_customer_embedding update_customer_embedding( (customer_id customer_id, , embedding embedding) )
+                
+                # Extract preference insights # Extract preference insights
+        preferences         preferences = = self self. .model model. .extract_preferences extract_preferences( (embedding embedding) )
+                
+                # Determine customer segments # Determine customer segments
+        segments         segments = = self self. .identify_segments identify_segments( (customer_id customer_id, , preferences preferences) )
+                
+                return return  { {
+                        'customer_id' 'customer_id': : customer_id customer_id, ,
+ python Copy
+'preferences'
+ 'preferences': : preferences
+ preferences, ,
+ 'embedding'
+ 'embedding': : embedding
+ embedding, ,
+ 'segments'
+ 'segments': : segments
+ segments
+ }
+ }
+ def
+ def  identify_segments
+ identify_segments( (self
+ self, , customer_id
+ customer_id, , preferences
+ preferences) ): :
+ """Identify which customer segments this user belongs to"""
+ """Identify which customer segments this user belongs to"""
+ # Implementation
+ # Implementation
+ def
+ def  detect_behavior_change
+ detect_behavior_change( (self
+ self, , customer_id
+ customer_id) ): :
+ """Detect significant changes in customer behavior"""
+ """Detect significant changes in customer behavior"""
+ # Implementation
+ # Implementation
+ Customer Embedding Model
+class class  CustomerEmbeddingModel CustomerEmbeddingModel: :
+        def def  __init__ __init__( (self self) ): :
+        self        self. .scaler scaler = = StandardScaler StandardScaler( () )
+                
+        def def  create_embedding create_embedding( (self self, , browsing_history browsing_history, , purchase_history purchase_history, , cart_history cart_history) ): :
+                """Create vector representation of customer preferences""" """Create vector representation of customer preferences"""
+                # Process browsing patterns # Process browsing patterns
+        browsing_features         browsing_features = = self self. ._extract_browsing_features _extract_browsing_features( (browsing_history browsing_history) )
+                
+                # Process purchase patterns # Process purchase patterns
+        purchase_features         purchase_features = = self self. ._extract_purchase_features _extract_purchase_features( (purchase_history purchase_history) )
+                
+                # Process cart behaviors # Process cart behaviors
+        cart_features         cart_features = = self self. ._extract_cart_features _extract_cart_features( (cart_history cart_history) )
+                
+                # Combine all features # Combine all features
+        all_features         all_features = = np np. .concatenate concatenate( ([ [
+            browsing_features            browsing_features, ,  
+            purchase_features            purchase_features, ,
+            cart_features            cart_features
+                ] ]) )
+                
+                # Normalize features # Normalize features
+        normalized_features         normalized_features = = self self. .scaler scaler. .fit_transform fit_transform( (all_features all_features. .reshape reshape( (1 1, ,  --1 1) )) )
+                
+                return return normalized_features normalized_features. .flatten flatten( () )
+                
+        def def  extract_preferences extract_preferences( (self self, , embedding embedding) ): :
+                """Convert embedding back into interpretable preferences""" """Convert embedding back into interpretable preferences"""
+                # Implementation # Implementation
+ python Copy
+def
+ def  _extract_browsing_features
+ _extract_browsing_features( (self
+ self, , browsing_history
+ browsing_history) ): :
+ """Extract features from browsing history"""
+ """Extract features from browsing history"""
+ # Implementation
+ # Implementation
+ def
+ def  _extract_purchase_features
+ _extract_purchase_features( (self
+ self, , purchase_history
+ purchase_history) ): :
+ """Extract features from purchase history"""
+ """Extract features from purchase history"""
+ # Implementation
+ # Implementation
+ def
+ def  _extract_cart_features
+ _extract_cart_features( (self
+ self, , cart_history
+ cart_history) ): :
+ """Extract features from cart behavior"""
+ """Extract features from cart behavior"""
+ # Implementation
+ # Implementation
+ 2. Product Catalog Agent
+class class  ProductCatalogAgent ProductCatalogAgent: :
+        def def  __init__ __init__( (self self, , db_manager db_manager) ): :
+        self        self. .db_manager db_manager = = db_manager db_manager
+        self        self. .model model = = ProductEmbeddingModel ProductEmbeddingModel( () )
+                
+        def def  process_product process_product( (self self, , product_id product_id) ): :
+                """Process a product to extract features and create embeddings""" """Process a product to extract features and create embeddings"""
+                # Get product data # Get product data
+        product         product = = self self. .db_manager db_manager. .get_product get_product( (product_id product_id) )
+                
+                # Generate product embedding # Generate product embedding
+        embedding         embedding = = self self. .model model. .create_embedding create_embedding( (product product) )
+                
+                # Update database # Update database
+        self        self. .db_manager db_manager. .update_product_embedding update_product_embedding( (product_id product_id, , embedding embedding) )
+                
+                # Find related products # Find related products
+        related_products         related_products = = self self. .find_related_products find_related_products( (product_id product_id) )
+                
+                return return  { {
+                        'product_id' 'product_id': : product_id product_id, ,
+                        'embedding' 'embedding': : embedding embedding, ,
+                        'related_products' 'related_products': : related_products related_products
+                } }
+                
+        def def  find_related_products find_related_products( (self self, , product_id product_id) ): :
+                """Find products that are related (similar or complementary)""" """Find products that are related (similar or complementary)"""
+                # Implementation # Implementation
+                
+        def def  process_all_products process_all_products( (self self) ): :
+ python Copy
+"""Process the entire product catalog"""
+ """Process the entire product catalog"""
+ # Implementation
+ # Implementation
+ def
+ def  track_product_performance
+ track_product_performance( (self
+ self, , product_id
+ product_id) ): :
+ """Track performance metrics for a product"""
+ """Track performance metrics for a product"""
+ # Implementation
+ # Implementation
+ Product Embedding Model
+class class  ProductEmbeddingModel ProductEmbeddingModel: :
+        def def  __init__ __init__( (self self) ): :
+        self        self. .vectorizer vectorizer = = TfidfVectorizer TfidfVectorizer( (max_features max_features= =100 100) )
+                
+        def def  create_embedding create_embedding( (self self, , product product) ): :
+                """Create vector representation of a product""" """Create vector representation of a product"""
+                # Process text fields # Process text fields
+        text_features         text_features = = self self. ._extract_text_features _extract_text_features( (
+            product            product[ ['name' 'name'] ], ,  
+            product            product[ ['description' 'description'] ]
+                ) )
+                
+                # Process categorical features # Process categorical features
+        categorical_features         categorical_features = = self self. ._extract_categorical_features _extract_categorical_features( (
+            product            product[ ['category' 'category'] ], ,
+            product            product[ ['subcategory' 'subcategory'] ], ,
+            product            product[ ['brand' 'brand'] ]
+                ) )
+                
+                # Process numerical features # Process numerical features
+        numerical_features         numerical_features = = self self. ._extract_numerical_features _extract_numerical_features( (
+            product            product[ ['price' 'price'] ], ,
+            product            product[ ['average_rating' 'average_rating'] ]
+                ) )
+                
+                # Combine all features # Combine all features
+        all_features         all_features = = np np. .concatenate concatenate( ([ [
+            text_features            text_features, ,  
+            categorical_features            categorical_features, ,
+            numerical_features            numerical_features
+ python Copy
+]
+ ]) )
+ return
+ return all_features
+ all_features
+ def
+ def  _extract_text_features
+ _extract_text_features( (self
+ self, , name
+ name, , description
+ description) ): :
+ """Extract features from text fields using TF-IDF"""
+ """Extract features from text fields using TF-IDF"""
+ # Implementation
+ # Implementation
+ def
+ def  _extract_categorical_features
+ _extract_categorical_features( (self
+ self, , category
+ category, , subcategory
+ brand) ): :
+ """Extract features from categorical fields using one-hot encoding"""
+ subcategory, , brand
+ """Extract features from categorical fields using one-hot encoding"""
+ # Implementation
+ # Implementation
+ def
+ def  _extract_numerical_features
+ _extract_numerical_features( (self
+ self, , price
+ rating) ): :
+ """Extract normalized numerical features"""
+ price, , rating
+ """Extract normalized numerical features"""
+ # Implementation
+ # Implementation
+ 3. Recommendation Engine Agent
+class class  RecommendationEngineAgent RecommendationEngineAgent: :
+        def def  __init__ __init__( (self self, , db_manager db_manager) ): :
+        self        self. .db_manager db_manager = = db_manager db_manager
+        self        self. .algorithms algorithms = =  { {
+                        'collaborative' 'collaborative': : CollaborativeFilter CollaborativeFilter( () ), ,
+                        'content_based' 'content_based': : ContentBasedFilter ContentBasedFilter( () ), ,
+                        'sequential' 'sequential': : SequentialRecommender SequentialRecommender( () ), ,
+                        'hybrid' 'hybrid': : HybridRecommender HybridRecommender( () )
+                } }
+        
+        def def  generate_recommendations generate_recommendations( (self self, , customer_id customer_id, , context context= =None None, , limit limit= =10 10) ): :
+                """Generate personalized recommendations for a customer""" """Generate personalized recommendations for a customer"""
+                # Get customer profile # Get customer profile
+        customer_profile         customer_profile = = self self. .db_manager db_manager. .get_customer_profile get_customer_profile( (customer_id customer_id) )
+                
+                # Determine appropriate algorithm based on context and profile # Determine appropriate algorithm based on context and profile
+        algorithm_name         algorithm_name = = self self. ._select_algorithm _select_algorithm( (customer_profile customer_profile, , context context) )
+        algorithm         algorithm = = self self. .algorithms algorithms[ [algorithm_name algorithm_name] ]
+                
+                # Generate personalized recommendations # Generate personalized recommendations
+        recommendations         recommendations = = algorithm algorithm. .recommend recommend( (
+            customer_id            customer_id= =customer_id customer_id, ,
+            customer_profile            customer_profile= =customer_profile customer_profile, ,
+            context            context= =context context, ,
+            db_manager            db_manager= =self self. .db_manager db_manager, ,
+            limit            limit= =limit limit
+                ) )
+                
+                # Apply business rules (e.g., exclude out-of-stock items) # Apply business rules (e.g., exclude out-of-stock items)
+        recommendations         recommendations = = self self. ._apply_business_rules _apply_business_rules( (recommendations recommendations) )
+ python Copy
+# Ensure diversity in recommendations
+ # Ensure diversity in recommendations
+ recommendations 
+recommendations = = self
+ self. ._ensure_diversity
+ _ensure_diversity( (recommendations
+ recommendations) )
+ # Log recommendations for feedback analysis
+ # Log recommendations for feedback analysis
+ self
+ self. .db_manager
+ db_manager. .log_recommendations
+ log_recommendations( (
+ customer_id
+ customer_id, , recommendations
+ recommendations, , algorithm_name
+ algorithm_name
+ )
+ )
+ return
+ return recommendations
+ recommendations
+ def
+ def  _select_algorithm
+ _select_algorithm( (self
+ self, , customer_profile
+ customer_profile, , context
+ context) ): :
+ """Select the best algorithm based on customer and context"""
+ """Select the best algorithm based on customer and context"""
+ # Implementation
+ # Implementation
+ def
+ def  _apply_business_rules
+ _apply_business_rules( (self
+ self, , recommendations
+ recommendations) ): :
+ """Apply business rules to filter recommendations"""
+ """Apply business rules to filter recommendations"""
+ # Implementation
+ # Implementation
+ def
+ def  _ensure_diversity
+ _ensure_diversity( (self
+ self, , recommendations
+ recommendations) ): :
+ """Ensure diversity in the recommendation set"""
+ """Ensure diversity in the recommendation set"""
+ # Implementation
+ # Implementation
+ 4. Feedback Analysis Agent
+class class  FeedbackAnalysisAgent FeedbackAnalysisAgent: :
+        def def  __init__ __init__( (self self, , db_manager db_manager) ): :
+        self        self. .db_manager db_manager = = db_manager db_manager
+                
+        def def  track_recommendation_response track_recommendation_response( (self self, , recommendation_id recommendation_id, , was_clicked was_clicked, , was_purchased was_purchased) )
+                """Track customer response to a recommendation""" """Track customer response to a recommendation"""
+                # Update recommendation record # Update recommendation record
+        self        self. .db_manager db_manager. .update_recommendation_feedback update_recommendation_feedback( (
+            recommendation_id            recommendation_id, ,  
+            was_clicked            was_clicked, ,  
+            was_purchased            was_purchased
+                ) )
+                
+        def def  analyze_algorithm_performance analyze_algorithm_performance( (self self, , algorithm_name algorithm_name, , time_period time_period= =None None) ): :
+                """Analyze performance metrics for a recommendation algorithm""" """Analyze performance metrics for a recommendation algorithm"""
+                # Get recommendation data # Get recommendation data
+        recommendations         recommendations = = self self. .db_manager db_manager. .get_recommendations_by_algorithm get_recommendations_by_algorithm( (
+            algorithm_name            algorithm_name, ,  
+            time_period            time_period
+                ) )
+                
+                # Calculate metrics # Calculate metrics
+        metrics         metrics = =  { {
+                        'click_through_rate' 'click_through_rate': : self self. ._calculate_ctr _calculate_ctr( (recommendations recommendations) ), ,
+                        'conversion_rate' 'conversion_rate': : self self. ._calculate_conversion _calculate_conversion( (recommendations recommendations) ), ,
+                        'revenue_impact' 'revenue_impact': : self self. ._calculate_revenue_impact _calculate_revenue_impact( (recommendations recommendations) )
+                } }
+                
+                return return metrics metrics
+                
+python Copy
+5. Coordinator Agent
+        def def  _calculate_ctr _calculate_ctr( (self self, , recommendations recommendations) ): :
+                """Calculate click-through rate""" """Calculate click-through rate"""
+                # Implementation # Implementation
+                
+        def def  _calculate_conversion _calculate_conversion( (self self, , recommendations recommendations) ): :
+                """Calculate conversion rate""" """Calculate conversion rate"""
+                # Implementation # Implementation
+                
+        def def  _calculate_revenue_impact _calculate_revenue_impact( (self self, , recommendations recommendations) ): :
+                """Calculate revenue impact""" """Calculate revenue impact"""
+                # Implementation # Implementation
+class class  CoordinatorAgent CoordinatorAgent: :
+        def def  __init__ __init__( (self self, , db_manager db_manager) ): :
+        self        self. .db_manager db_manager = = db_manager db_manager
+        self        self. .customer_agent customer_agent = = CustomerProfileAgent CustomerProfileAgent( (db_manager db_manager) )
+        self        self. .product_agent product_agent = = ProductCatalogAgent ProductCatalogAgent( (db_manager db_manager) )
+        self        self. .recommendation_agent recommendation_agent = = RecommendationEngineAgent RecommendationEngineAgent( (db_manager db_manager) )
+        self        self. .feedback_agent feedback_agent = = FeedbackAnalysisAgent FeedbackAnalysisAgent( (db_manager db_manager) )
+                
+        def def  handle_customer_event handle_customer_event( (self self, , event_type event_type, , event_data event_data) ): :
+                """Process a customer event and trigger appropriate agent actions""" """Process a customer event and trigger appropriate agent actions"""
+                if if event_type  event_type == ==  'page_view' 'page_view': :
+                        # Update customer profile # Update customer profile
+            self            self. .customer_agent customer_agent. .analyze_customer analyze_customer( (event_data event_data[ ['customer_id' 'customer_id'] ]) )
+                        
+                        # Generate recommendations for current context # Generate recommendations for current context
+            recommendations             recommendations = = self self. .recommendation_agent recommendation_agent. .generate_recommendations generate_recommendations( (
+                event_data                event_data[ ['customer_id' 'customer_id'] ], ,
+                context                context= ={ {
+                                        'page_type' 'page_type': : event_data event_data[ ['page_type' 'page_type'] ], ,
+                                        'current_product' 'current_product': : event_data event_data. .get get( ('product_id' 'product_id') )
+                                } }
+                        ) )
+                        
+                        return return recommendations recommendations
+                        
+                elif elif event_type  event_type == ==  'purchase' 'purchase': :
+                        # Update customer profile # Update customer profile
+            self            self. .customer_agent customer_agent. .analyze_customer analyze_customer( (event_data event_data[ ['customer_id' 'customer_id'] ]) )
+                        
+                        # Generate post-purchase recommendations # Generate post-purchase recommendations
+ python Copy
+recommendations 
+recommendations = = self
+ self. .recommendation_agent
+ recommendation_agent. .generate_recommendations
+ generate_recommendations( (
+ event_data
+ event_data[ ['customer_id'
+ 'customer_id'] ], ,
+ context
+ context= ={ {
+ 'page_type'
+ 'page_type': :  'post_purchase'
+ 'post_purchase', ,
+ 'purchased_items'
+ 'purchased_items': : event_data
+ event_data[ ['items'
+ 'items'] ]
+ }
+ }
+ )
+ )
+ return
+ return recommendations
+ recommendations
+ # Handle other event types...
+ # Handle other event types...
+ def
+ def  handle_recommendation_feedback
+ handle_recommendation_feedback( (self
+ self, , recommendation_id
+ recommendation_id, , interaction_type
+ interaction_type) ): :
+ """Process feedback for a recommendation"""
+ """Process feedback for a recommendation"""
+ # Implementation
+ # Implementation
+ def
+ def  refresh_product_catalog
+ refresh_product_catalog( (self
+ self) ): :
+ """Refresh product data and embeddings"""
+ """Refresh product data and embeddings"""
+ # Implementation
+ # Implementation
+ def
+ def  optimize_algorithms
+ optimize_algorithms( (self
+ self) ): :
+ """Tune recommendation algorithms based on feedback"""
+ """Tune recommendation algorithms based on feedback"""
+ # Implementation
+ # Implementation
+ Recommendation Algorithms
+ The system implements multiple recommendation approaches to address different scenarios and 
+maximize personalization effectiveness.
+ 1. Collaborative Filtering
+class class  CollaborativeFilter CollaborativeFilter: :
+        def def  __init__ __init__( (self self) ): :
+        self        self. .model model = =  None None
+                
+        def def  train train( (self self, , db_manager db_manager) ): :
+                """Train the collaborative filtering model""" """Train the collaborative filtering model"""
+                # Get all customer-product interactions # Get all customer-product interactions
+        interactions         interactions = = db_manager db_manager. .get_all_interactions get_all_interactions( () )
+                
+                # Prepare sparse matrix of user-item interactions # Prepare sparse matrix of user-item interactions
+        user_item_matrix         user_item_matrix = = self self. ._prepare_user_item_matrix _prepare_user_item_matrix( (interactions interactions) )
+                
+                # Train matrix factorization model # Train matrix factorization model
+        self        self. .model model = = self self. ._train_matrix_factorization _train_matrix_factorization( (user_item_matrix user_item_matrix) )
+                
+        def def  recommend recommend( (self self, , customer_id customer_id, , customer_profile customer_profile, , context context, , db_manager db_manager, , limit limit= =10 10) ): :
+                """Generate recommendations using collaborative filtering""" """Generate recommendations using collaborative filtering"""
+                # If model not trained, train it # If model not trained, train it
+                if if self self. .model model is is  None None: :
+            self            self. .train train( (db_manager db_manager) )
+                        
+                # Get user factors # Get user factors
+        user_factors         user_factors = = self self. .model model. .user_factors user_factors[ [customer_id customer_id] ]
+                
+                # Get all product factors # Get all product factors
+        product_factors         product_factors = = self self. .model model. .item_factors item_factors
+                
+                # Calculate similarity scores # Calculate similarity scores
+        similarity_scores         similarity_scores = = np np. .dot dot( (user_factors user_factors, , product_factors product_factors. .T T) )
+                
+python Copy
+# Get top product ids
+ # Get top product ids
+ top_product_ids 
+top_product_ids = = self
+ self. ._get_top_products
+ _get_top_products( (similarity_scores
+ similarity_scores, , limit
+ limit) )
+ # Format recommendations
+ # Format recommendations
+ recommendations 
+recommendations = =  [ [
+ {
+ {
+ 'product_id'
+ 'product_id': : pid
+ pid, ,
+ 'score'
+ 'score': :  float
+ float( (similarity_scores
+ similarity_scores[ [pid
+ pid] ]) ), ,
+ 'reason'
+ 'reason': :  'Customers with similar preferences purchased this item'
+ 'Customers with similar preferences purchased this item'
+ }
+ }
+ for
+ for pid 
+pid in
+ in top_product_ids
+ top_product_ids
+ ]
+ ]
+ return
+ return recommendations
+ recommendations
+ def
+ def  _prepare_user_item_matrix
+ _prepare_user_item_matrix( (self
+ self, , interactions
+ interactions) ): :
+ """Prepare sparse matrix of user-item interactions"""
+ """Prepare sparse matrix of user-item interactions"""
+ # Implementation
+ # Implementation
+ def
+ def  _train_matrix_factorization
+ _train_matrix_factorization( (self
+ self, , user_item_matrix
+ user_item_matrix) ): :
+ """Train matrix factorization model"""
+ """Train matrix factorization model"""
+ # Implementation
+ # Implementation
+ def
+ def  _get_top_products
+ _get_top_products( (self
+ self, , similarity_scores
+ similarity_scores, , limit
+ limit) ): :
+ """Get top product IDs based on similarity scores"""
+ """Get top product IDs based on similarity scores"""
+ # Implementation
+ # Implementation
+ 2. Content-Based Filtering
+class class  ContentBasedFilter ContentBasedFilter: :
+        def def  recommend recommend( (self self, , customer_id customer_id, , customer_profile customer_profile, , context context, , db_manager db_manager, , limit limit= =10 10) ): :
+                """Generate recommendations using content-based filtering""" """Generate recommendations using content-based filtering"""
+                # Get customer embedding # Get customer embedding
+        customer_embedding         customer_embedding = = customer_profile customer_profile[ ['embedding' 'embedding'] ]
+                
+                # Get all product embeddings # Get all product embeddings
+        product_embeddings         product_embeddings = = db_manager db_manager. .get_all_product_embeddings get_all_product_embeddings( () )
+                
+                # Calculate similarity scores # Calculate similarity scores
+        similarity_scores         similarity_scores = =  { {} }
+                for for product_id product_id, , product_embedding  product_embedding in in product_embeddings product_embeddings. .items items( () ): :
+            similarity             similarity = = cosine_similarity cosine_similarity( (
+                customer_embedding                customer_embedding. .reshape reshape( (1 1, ,  --1 1) ), ,
+                product_embedding                product_embedding. .reshape reshape( (1 1, ,  --1 1) )
+                        ) )[ [0 0] ][ [0 0] ]
+            similarity_scores            similarity_scores[ [product_id product_id] ]  = = similarity similarity
+                
+                # Sort by similarity and get top products # Sort by similarity and get top products
+        top_products         top_products = =  sorted sorted( (
+            similarity_scores            similarity_scores. .items items( () ), ,  
+            key            key= =lambda lambda x x: : x x[ [1 1] ], ,  
+            reverse            reverse= =True True
+                ) )[ [: :limit limit] ]
+                
+                # Format recommendations # Format recommendations
+        recommendations         recommendations = =  [ [
+                        { {
+                                'product_id' 'product_id': : pid pid, ,
+                                'score' 'score': :  float float( (score score) ), ,
+ python Copy
+'reason'
+ 'reason': :  'Based on your preferences for similar products'
+ 'Based on your preferences for similar products'
+ }
+ }
+ for
+ for pid
+ pid, , score 
+score in
+ in top_products
+ top_products
+ ]
+ ]
+ return
+ return recommendations
+ recommendations
+ 3. Sequential Recommender
+class class  SequentialRecommender SequentialRecommender: :
+        def def  __init__ __init__( (self self) ): :
+        self        self. .model model = =  None None
+                
+        def def  train train( (self self, , db_manager db_manager) ): :
+                """Train the sequential recommendation model""" """Train the sequential recommendation model"""
+                # Get all customer purchase sequences # Get all customer purchase sequences
+        sequences         sequences = = db_manager db_manager. .get_all_purchase_sequences get_all_purchase_sequences( () )
+                
+                # Train the sequential model (e.g., Markov Chain) # Train the sequential model (e.g., Markov Chain)
+        self        self. .model model = = self self. ._train_markov_model _train_markov_model( (sequences sequences) )
+                
+        def def  recommend recommend( (self self, , customer_id customer_id, , customer_profile customer_profile, , context context, , db_manager db_manager, , limit limit= =10 10) ): :
+                """Generate recommendations using sequential patterns""" """Generate recommendations using sequential patterns"""
+                # If model not trained, train it # If model not trained, train it
+                if if self self. .model model is is  None None: :
+            self            self. .train train( (db_manager db_manager) )
+                        
+                # Get customer's recent purchases # Get customer's recent purchases
+        recent_purchases         recent_purchases = = customer_profile customer_profile[ ['purchase_history' 'purchase_history'] ][ [--5 5: :] ]
+                
+                # If context includes current product view, add it to the sequence # If context includes current product view, add it to the sequence
+                if if context  context and and  'current_product' 'current_product'  in in context context: :
+            sequence             sequence = = recent_purchases  recent_purchases + +  [ [context context[ ['current_product' 'current_product'] ]] ]
+                else else: :
+            sequence             sequence = = recent_purchases recent_purchases
+                
+                # Predict next items in sequence # Predict next items in sequence
+        next_items         next_items = = self self. .model model. .predict_next predict_next( (sequence sequence, , limit limit) )
+                
+python Copy
+# Format recommendations
+ # Format recommendations
+ recommendations 
+recommendations = =  [ [
+ {
+ {
+ 'product_id'
+ 'product_id': : pid
+ pid, ,
+ 'score'
+ 'score': :  float
+ float( (score
+ score) ), ,
+ 'reason'
+ 'reason': :  'Frequently purchased next based on your shopping pattern'
+ 'Frequently purchased next based on your shopping pattern'
+ }
+ }
+ for
+ for pid
+ pid, , score 
+score in
+ in next_items
+ next_items
+ ]
+ ]
+ return
+ return recommendations
+ recommendations
+ def
+ def  _train_markov_model
+ _train_markov_model( (self
+ self, , sequences
+ sequences) ): :
+ """Train a Markov Chain model on purchase sequences"""
+ """Train a Markov Chain model on purchase sequences"""
+ # Implementation
+ # Implementation
+ 4. Hybrid Recommender
+class class  HybridRecommender HybridRecommender: :
+        def def  __init__ __init__( (self self) ): :
+        self        self. .recommenders recommenders = =  { {
+                        'collaborative' 'collaborative': : CollaborativeFilter CollaborativeFilter( () ), ,
+                        'content_based' 'content_based': : ContentBasedFilter ContentBasedFilter( () ), ,
+                        'sequential' 'sequential': : SequentialRecommender SequentialRecommender( () )
+                } }
+        self        self. .weights weights = =  { {
+                        'collaborative' 'collaborative': :  0.4 0.4, ,
+                        'content_based' 'content_based': :  0.4 0.4, ,
+                        'sequential' 'sequential': :  0.2 0.2
+                } }
+                
+        def def  recommend recommend( (self self, , customer_id customer_id, , customer_profile customer_profile, , context context, , db_manager db_manager, , limit limit= =10 10) ): :
+                """Generate recommendations using a hybrid approach""" """Generate recommendations using a hybrid approach"""
+        all_recommendations         all_recommendations = =  { {} }
+                
+                # Get recommendations from each algorithm # Get recommendations from each algorithm
+                for for name name, , recommender  recommender in in self self. .recommenders recommenders. .items items( () ): :
+            recs             recs = = recommender recommender. .recommend recommend( (
+                customer_id                customer_id, ,
+                customer_profile                customer_profile, ,
+                context                context, ,
+                db_manager                db_manager, ,
+                limit                limit= =limit limit* *2 2    # Get more to allow for merging # Get more to allow for merging
+                        ) )
+                        
+                        # Apply weights to scores # Apply weights to scores
+                        for for rec  rec in in recs recs: :
+                rec                rec[ ['score' 'score'] ]  *= *= self self. .weights weights[ [name name] ]
+ python Copy
+Implementation Details
+ Initialization and Setup
+                                
+                        # Add to combined recommendations # Add to combined recommendations
+                        for for rec  rec in in recs recs: :
+                pid                 pid = = rec rec[ ['product_id' 'product_id'] ]
+                                if if pid  pid in in all_recommendations all_recommendations: :
+                                        # If already recommended, take the higher score # If already recommended, take the higher score
+                                        if if rec rec[ ['score' 'score'] ]  > > all_recommendations all_recommendations[ [pid pid] ][ ['score' 'score'] ]: :
+                        all_recommendations                        all_recommendations[ [pid pid] ]  = = rec rec
+                                else else: :
+                    all_recommendations                    all_recommendations[ [pid pid] ]  = = rec rec
+                
+                # Sort by score and get top recommendations # Sort by score and get top recommendations
+        top_recommendations         top_recommendations = =  sorted sorted( (
+            all_recommendations            all_recommendations. .values values( () ), ,
+            key            key= =lambda lambda x x: : x x[ ['score' 'score'] ], ,
+            reverse            reverse= =True True
+                ) )[ [: :limit limit] ]
+                
+                return return top_recommendations top_recommendations
+                
+        def def  update_weights update_weights( (self self, , performance_metrics performance_metrics) ): :
+                """Update algorithm weights based on performance""" """Update algorithm weights based on performance"""
+                # Implementation # Implementation
+def def  initialize_system initialize_system( () ): :
+        """Initialize the complete multi-agent recommendation system""" """Initialize the complete multi-agent recommendation system"""
+        # Create database manager # Create database manager
+    db_manager     db_manager = = DatabaseManager DatabaseManager( ('ecommerce.db' 'ecommerce.db') )
+    db_manager    db_manager. .setup_database setup_database( () )
+        
+        # Initialize coordinator agent # Initialize coordinator agent
+    coordinator     coordinator = = CoordinatorAgent CoordinatorAgent( (db_manager db_manager) )
+        
+        # Start background processes # Start background processes
+    start_background_processes    start_background_processes( (coordinator coordinator) )
+        
+        # Initialize API server # Initialize API server
+    api_server     api_server = = APIServer APIServer( (coordinator coordinator) )
+    api_server    api_server. .start start( () )
+        
+        return return api_server api_server
+ def def  start_background_processes start_background_processes( (coordinator coordinator) ): :
+        """Start background processes for continuous improvement""" """Start background processes for continuous improvement"""
+        # Start product catalog updater # Start product catalog updater
+    threading    threading. .Thread Thread( (
+        target        target= =periodic_task periodic_task, ,
+        args        args= =( (coordinator coordinator. .refresh_product_catalog refresh_product_catalog, ,  3600 3600) ), ,    # Every hour # Every hour
+        daemon        daemon= =True True
+        ) ). .start start( () )
+        
+        # Start algorithm optimizer # Start algorithm optimizer
+    threading    threading. .Thread Thread( (
+        target        target= =periodic_task periodic_task, ,
+ python Copy
+args
+ args= =( (coordinator
+ coordinator. .optimize_algorithms
+ optimize_algorithms, ,  86400
+ 86400) ), ,    # Every day
+ # Every day
+ daemon
+ daemon= =True
+ True
+ )
+ ). .start
+ start( () )
+ def
+ def  periodic_task
+ periodic_task( (function
+ function, , interval
+ interval) ): :
+ """Run a function periodically at specified interval (seconds)"""
+ """Run a function periodically at specified interval (seconds)"""
+ while
+ while  True
+ True: :
+ function
+ function( () )
+ time
+ time. .sleep
+ sleep( (interval
+ interval) )
+ API Server
+class class  APIServer APIServer: :
+        def def  __init__ __init__( (self self, , coordinator coordinator) ): :
+        self        self. .coordinator coordinator = = coordinator coordinator
+        self        self. .app app = = self self. ._create_app _create_app( () )
+                
+        def def  _create_app _create_app( (self self) ): :
+                """Create the API application""" """Create the API application"""
+                from from flask  flask import import Flask Flask, , request request, , jsonify jsonify
+                
+        app         app = = Flask Flask( (__name__ __name__) )
+                
+                @app @app. .route route( ('/recommendations' '/recommendations', , methods methods= =[ ['GET' 'GET'] ]) )
+                def def  get_recommendations get_recommendations( () ): :
+            customer_id             customer_id = = request request. .args args. .get get( ('customer_id' 'customer_id', ,  type type= =int int) )
+            context             context = = request request. .args args. .get get( ('context' 'context', ,  type type= =dict dict, , default default= ={ {} }) )
+            limit             limit = = request request. .args args. .get get( ('limit' 'limit', ,  type type= =int int, , default default= =10 10) )
+                        
+            recommendations             recommendations = = self self. .coordinator coordinator. .recommendation_agent recommendation_agent. .generate_recommendatio generate_recommendatio
+                customer_id                customer_id, ,
+                context                context, ,
+                limit                limit
+                        ) )
+                        
+                        return return jsonify jsonify( (recommendations recommendations) )
+                        
+                @app @app. .route route( ('/event' '/event', , methods methods= =[ ['POST' 'POST'] ]) )
+                def def  handle_event handle_event( () ): :
+            event_data             event_data = = request request. .json json
+            event_type             event_type = = event_data event_data. .get get( ('event_type' 'event_type') )
+                        
+python Copy
+Workflow Processes
+ 1. New Customer Workflow
+ 1. Customer registers on the e-commerce platform
+ 2. System creates a new customer record in the database
+ 3. Initial recommendations are generated based on:
+ Popular products in customer's region/demographic
+ Seasonal or trending items
+            result             result = = self self. .coordinator coordinator. .handle_customer_event handle_customer_event( (event_type event_type, , event_data event_data) )
+                        
+                        return return jsonify jsonify( (result result) )
+                        
+                @app @app. .route route( ('/feedback' '/feedback', , methods methods= =[ ['POST' 'POST'] ]) )
+                def def  handle_feedback handle_feedback( () ): :
+            feedback_data             feedback_data = = request request. .json json
+                        
+            result             result = = self self. .coordinator coordinator. .handle_recommendation_feedback handle_recommendation_feedback( (
+                feedback_data                feedback_data. .get get( ('recommendation_id' 'recommendation_id') ), ,
+                feedback_data                feedback_data. .get get( ('interaction_type' 'interaction_type') )
+                        ) )
+                        
+                        return return jsonify jsonify( (result result) )
+                        
+                return return app app
+                
+        def def  start start( (self self, , host host= ='0.0.0.0' '0.0.0.0', , port port= =5000 5000) ): :
+                """Start the API server""" """Start the API server"""
+        self        self. .app app. .run run( (host host= =host host, , port port= =port port) )
+New arrivals
+ 4. As the customer browses, each interaction is recorded
+ 5. Customer Profile Agent continuously updates preferences
+ 6. Recommendations become increasingly personalized
+ 2. Product View Workflow
+ 1. Customer views a product page
+ 2. System logs the view event with duration and actions
+ 3. Customer Profile Agent updates customer embedding
+ 4. Recommendation Engine Agent generates recommendations based on:
+ The current product being viewed
+ Customer's updated profile
+ Session context (e.g., search queries, filters used)
+ 5. Recommendations are displayed on the product page
+ 6. Customer interactions with recommendations are tracked
+ 3. Purchase Workflow
+ 1. Customer completes a purchase
+ 2. System logs the purchase event with all items
+ 3. Customer Profile Agent updates customer embedding
+ 4. Sequential Recommender updates purchase pattern data
+ 5. Recommendation Engine Agent generates post-purchase recommendations
+ 6. Feedback Analysis Agent evaluates previous recommendations that led to the purchase
+ 4. Continuous Improvement Workflow
+1. Feedback Analysis Agent regularly analyzes recommendation performance
+ 2. Coordinator Agent adjusts algorithm weights based on performance metrics
+ 3. Product Catalog Agent refreshes product embeddings for new or updated items
+ 4. Customer Embeddings are periodically recalculated to incorporate new data
+ 5. Algorithm parameters are tuned based on overall system performance
+ Evaluation Framework
+ The system employs multiple metrics to evaluate performance and guide improvements.
+ Business Metrics
+ 1. Conversion Rate: Percentage of sessions that result in purchases
+ Conversion Rate = (Number of Purchases / Number of Sessions) * 100
+ Conversion Rate = (Number of Purchases / Number of Sessions) * 100
+ Copy
+ 2. Average Order Value (AOV): Average amount spent per order
+ AOV = Total Revenue / Number of Orders
+ AOV = Total Revenue / Number of Orders
+ Copy
+ 3. Revenue per Session: Average revenue generated per user session
+ Revenue per Session = Total Revenue / Number of Sessions
+ Revenue per Session = Total Revenue / Number of Sessions
+ Copy
+ 4. Customer Lifetime Value (CLV): Estimated total value of a customer over time
+Copy
+ CLV = Average Purchase Value * Purchase Frequency * Customer Lifespan
+ CLV = Average Purchase Value * Purchase Frequency * Customer Lifespan
+ Recommendation Quality Metrics
+ 1. Click-Through Rate (CTR): Percentage of recommendations that are clicked
+ CTR = (Number of Clicks / Number of Recommendations Shown) * 100
+ CTR = (Number of Clicks / Number of Recommendations Shown) * 100
+ Copy
+ 2. Add-to-Cart Rate: Percentage of recommendations
+
+ Multi-Agent E-Commerce Recommendation System
+ Comprehensive Solution Guide (Continued)
+ Evaluation Framework (Continued)
+ Recommendation Quality Metrics (Continued)
+ 2. Add-to-Cart Rate: Percentage of recommendations that lead to cart additions
+ Copy
+ Add-to-Cart Rate = (Number of Add-to-Carts / Number of Recommendations Shown) * 100
+ Add-to-Cart Rate = (Number of Add-to-Carts / Number of Recommendations Shown) * 100
+ 3. Recommendation Conversion Rate: Percentage of recommendations that lead to purchases
+ Copy
+ Recommendation Conversion Rate = (Number of Purchased Recommendations / Number of Reco
+ Recommendation Conversion Rate = (Number of Purchased Recommendations / Number of Reco
+ 
+ 4. Catalog Coverage: Percentage of product catalog that appears in recommendations
+ Copy
+ 
+ Catalog Coverage = (Number of Unique Products Recommended / Total Number of Products) 
+Catalog Coverage = (Number of Unique Products Recommended / Total Number of Products) 
+
+ 5. Recommendation Diversity: Average dissimilarity between recommended products
+ 
+ Copy
+ Diversity = Average pairwise distance between product embeddings in recommendation set
+ Diversity = Average pairwise distance between product embeddings in recommendation set
+ 
+ 
+6. Serendipity: Measure of how surprising yet relevant recommendations are
+ Serendipity = Relevance * (1 - Popularity)
+ Serendipity = Relevance * (1 - Popularity)
+ Copy
+ System Performance Metrics
+ 1. Response Time: Time taken to generate recommendations
+ Response Time = Average time from request to delivery of recommendations
+ Response Time = Average time from request to delivery of recommendations
+ Copy
+ 2. Memory Usage: Database and application memory consumption
+ Memory Usage = Peak memory usage during recommendation generation
+ Memory Usage = Peak memory usage during recommendation generation
+ Copy
+ 3. CPU Utilization: Computational resources required
+ CPU Utilization = Average CPU usage during recommendation operations
+ CPU Utilization = Average CPU usage during recommendation operations
+ Copy
+ 4. Throughput: Number of recommendation requests that can be handled
+ Throughput = Number of recommendation requests processed per second
+ Throughput = Number of recommendation requests processed per second
+ Copy
+ Deployment Guidelines
+System Requirements
+ 1. Hardware Requirements:
+ Minimum: 4-core CPU, 8GB RAM, 100GB SSD
+ Recommended: 8-core CPU, 16GB RAM, 250GB SSD
+ For large catalogs (>100K products): 16-core CPU, 32GB RAM, 500GB SSD
+ 2. Software Requirements:
+ Python 3.8+
+ SQLite 3.35+ (or other database if preferred)
+ Required Python packages:
+ numpy, pandas, scikit-learn
+ tensorflow or pytorch (for embedding models)
+ flask (for API server)
+ Installation Steps
+ 1. Environment Setup:
+ bash Copy
+ # Create virtual environment
+ # Create virtual environment
+ python -m venv ecommerce_rec_env
+ python -m venv ecommerce_rec_env
+ source
+ source ecommerce_rec_env/bin/activate  
+ecommerce_rec_env/bin/activate  # On Windows: ecommerce_rec_env\Scripts\activat
+ # On Windows: ecommerce_rec_env\Scripts\activat
+ # Install dependencies
+ # Install dependencies
+ pip 
+pip install
+ install numpy pandas scikit-learn tensorflow flask
+ numpy pandas scikit-learn tensorflow flask
+ 
+ 
+ 2. Database Initialization:
+python Copy
+ from
+ from system
+ system. .database 
+database import
+ import DatabaseManager
+ DatabaseManager
+ # Initialize database
+ # Initialize database
+ db_manager 
+db_manager = = DatabaseManager
+ db_manager
+ db_manager. .setup_database
+ DatabaseManager( ('ecommerce.db'
+ 'ecommerce.db') )
+ setup_database( () )
+ 3. System Initialization:
+ python Copy
+ from
+ from system
+ system. .core 
+core import
+ import initialize_system
+ initialize_system
+ # Initialize the system
+ # Initialize the system
+ api_server 
+api_server = = initialize_system
+ initialize_system( () )
+ # Start the API server
+ # Start the API server
+ api_server
+ api_server. .start
+ start( (host
+ host= ='0.0.0.0'
+ '0.0.0.0', , port
+ port= =5000
+ 5000) )
+ Integration with E-Commerce Platform
+ 1. API Endpoints:
+ /recommendations?customer_id=123 - Get recommendations for a customer
+ /event - Log customer events (page views, purchases, etc.)
+ /feedback - Log feedback on recommendations
+ 2. Example API Calls:
+// Get recommendations for a customer // Get recommendations for a customer
+ fetch fetch( ('/recommendations?customer_id=123&limit=5' '/recommendations?customer_id=123&limit=5') )
+    . .then then( (response response  => => response response. .json json( () )) )
+    . .then then( (data data  => =>  { {
+        // Display recommendations // Display recommendations
+        displayRecommendations displayRecommendations( (data data) ); ;
+    } }) ); ;
+ // Log a product view event // Log a product view event
+ fetch fetch( ('/event' '/event', ,  { {
+    method method: :  'POST' 'POST', ,
+    headers headers: :  { {  'Content-Type' 'Content-Type': :  'application/json' 'application/json'  } }, ,
+    body body: :  JSON JSON. .stringify stringify( ({ {
+        event_type event_type: :  'page_view' 'page_view', ,
+        customer_id customer_id: :  123 123, ,
+        product_id product_id: :  456 456, ,
+        page_type page_type: :  'product_page' 'product_page', ,
+        timestamp timestamp: :  new new  Date Date( () ). .toISOString toISOString( () )
+    } }) )
+ } }) ); ;
+ // Log recommendation feedback // Log recommendation feedback
+ fetch fetch( ('/feedback' '/feedback', ,  { {
+    method method: :  'POST' 'POST', ,
+    headers headers: :  { {  'Content-Type' 'Content-Type': :  'application/json' 'application/json'  } }, ,
+    body body: :  JSON JSON. .stringify stringify( ({ {
+        recommendation_id recommendation_id: :  789 789, ,
+        interaction_type interaction_type: :  'click' 'click', ,
+        timestamp timestamp: :  new new  Date Date( () ). .toISOString toISOString( () )
+ javascript Copy
+}
+ }) )
+ }
+ }) ); ;
+ 3. Frontend Integration:
+<!-- Example recommendation display --> <!-- Example recommendation display -->
+ < <div div  class class= =" "product-recommendations product-recommendations" "> >
+    < <h3 h3> >Recommended for You Recommended for You</ </h3 h3> >
+    < <div div  id id= =" "recommendations-container recommendations-container" "  class class= =" "products-grid products-grid" "> >
+        <!-- Recommendations will be inserted here --> <!-- Recommendations will be inserted here -->
+    </ </div div> >
+ </ </div div> >
+ < <script script> >
+    // Function to display recommendations // Function to display recommendations
+    function function  displayRecommendations displayRecommendations( (recommendations recommendations) )  { {
+        const const container  container = =  document document. .getElementById getElementById( ('recommendations-container' 'recommendations-container') ); ;
+    container    container. .innerHTML innerHTML  = =  '' ''; ;
+        
+    recommendations    recommendations. .forEach forEach( (rec rec  => =>  { {
+            const const productElem  productElem = =  document document. .createElement createElement( ('div' 'div') ); ;
+      productElem      productElem. .className className  = =  'product-card' 'product-card'; ;
+      productElem      productElem. .innerHTML innerHTML  = =  ` `
+        <img src="/product-images/${rec.product_id}.jpg" alt="Product">        <img src="/product-images/${rec.product_id}.jpg" alt="Product">
+        <h4>${rec.product_name}</h4>        <h4>${rec.product_name}</h4>
+        <p class="price">$${rec.price}</p>        <p class="price">$${rec.price}</p>
+        <button class="add-to-cart" data-product-id="${rec.product_id}">        <button class="add-to-cart" data-product-id="${rec.product_id}">
+          Add to Cart          Add to Cart
+        </button>        </button>
+            ` `; ;
+            
+            // Add click tracking // Add click tracking
+      productElem      productElem. .addEventListener addEventListener( ('click' 'click', ,  ( () )  => =>  { {
+                logRecommendationFeedback logRecommendationFeedback( (rec rec. .id id, ,  'click' 'click') ); ;
+            } }) ); ;
+ html Copy
+container
+ container. .appendChild
+ appendChild( (productElem
+ productElem) ); ;
+ }
+ }) ); ;
+ }
+ }
+ // Function to log recommendation feedback
+ // Function to log recommendation feedback
+ function
+ function  logRecommendationFeedback
+ logRecommendationFeedback( (recommendationId
+ recommendationId, , interactionType
+ interactionType) )  { {
+ fetch
+ fetch( ('/feedback'
+ '/feedback', ,  { {
+ method
+ method: :  'POST'
+ 'POST', ,
+ headers
+ headers: :  { {  'Content-Type'
+ 'Content-Type': :  'application/json'
+ 'application/json'  } }, ,
+ body
+ body: :  JSON
+ JSON. .stringify
+ stringify( ({ {
+ recommendation_id
+ recommendation_id: : recommendationId
+ recommendationId, ,
+ interaction_type
+ interaction_type: : interactionType
+ interactionType, ,
+ timestamp
+ timestamp: :  new
+ new  Date
+ Date( () ). .toISOString
+ toISOString( () )
+ }
+ }) )
+ }
+ }) ); ;
+ }
+ }
+ </
+ </script
+ script> >
+ Scaling Considerations
+ 1. Database Scaling:
+ For large catalogs (>100K products), consider migrating from SQLite to PostgreSQL
+ Implement database sharding for very large customer bases (>1M users)
+ Use caching (Redis/Memcached) for frequent queries
+ 2. Computational Scaling:
+ Implement batch processing for computationally intensive tasks
+ Consider distributed computing for embedding generation
+ Use GPU acceleration for neural network-based models
+ 3. API Scaling:
+Implement load balancing across multiple API instances
+ Use asynchronous processing for non-critical tasks
+ Implement rate limiting for API endpoints
+ Monitoring and Maintenance
+ Monitoring Setup
+ 1. Performance Monitoring:
+python Copy
+ def
+ def  monitor_performance
+ monitor_performance( () ): :
+ """Monitor system performance and log metrics"""
+ """Monitor system performance and log metrics"""
+ while
+ while  True
+ True: :
+ # Measure response time
+ # Measure response time
+ start_time 
+start_time = = time
+ time. .time
+ time( () )
+ test_recommendations 
+test_recommendations = = coordinator
+ coordinator. .recommendation_agent
+ recommendation_agent. .generate_recommendatio
+ generate_recommendatio
+ customer_id
+ customer_id= =1 1, ,
+ limit
+ limit= =10
+ 10
+ )
+ )
+ response_time 
+response_time = = time
+ time. .time
+ time( () )  -- start_time
+ start_time
+ # Log metrics
+ # Log metrics
+ logger
+ logger. .info
+ info( (f"Response time: 
+f"Response time: { {response_time
+ response_time: :.4f
+ .4f} }s"
+ s") )
+ logger
+ logger. .info
+ info( (f"Memory usage: 
+f"Memory usage: { {get_memory_usage
+ get_memory_usage( () )} } MB"
+ MB") )
+ logger
+ logger. .info
+ info( (f"CPU utilization: 
+f"CPU utilization: { {get_cpu_utilization
+ get_cpu_utilization( () )} } %"
+ %") )
+ # Sleep for monitoring interval
+ # Sleep for monitoring interval
+ time
+ time. .sleep
+ sleep( (300
+ 300) )    # Check every 5 minutes
+ # Check every 5 minutes
+ # Start monitoring in background thread
+ # Start monitoring in background thread
+ threading
+ threading. .Thread
+ Thread( (target
+ target= =monitor_performance
+ monitor_performance, , daemon
+ daemon= =True
+ True) ). .start
+ start( () )
+ 
+ 2. Error Logging:
+ 
+python Copy
+ # Configure logging
+ # Configure logging
+ logging
+ logging. .basicConfig
+ basicConfig( (
+ filename
+ filename= ='recommendation_system.log'
+ 'recommendation_system.log', ,
+ level
+ level= =logging
+ logging. .INFO
+ format
+ INFO, ,
+ format= ='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+ '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+ )
+ )
+ logger 
+logger = = logging
+ logging. .getLogger
+ getLogger( ('recommendation_system'
+ # Example error handling
+ # Example error handling
+ def
+ 'recommendation_system') )
+ def  safe_generate_recommendations
+ safe_generate_recommendations( (customer_id
+ try
+ try: :
+ return
+ return coordinator
+ customer_id
+ customer_id, , context
+ )
+ )
+ except
+ except Exception 
+logger
+ customer_id, , context
+ context= =None
+ None, , limit
+ coordinator. .recommendation_agent
+ limit= =10
+ 10) ): :
+ recommendation_agent. .generate_recommendations
+ generate_recommendations( (
+ context, , limit
+ limit
+ Exception as
+ as e e: :
+ logger. .error
+ error( (f"Error generating recommendations: 
+f"Error generating recommendations: { {str
+ logger
+ logger. .exception
+ exception( (e e) )
+ return
+ return get_fallback_recommendations
+ get_fallback_recommendations( (limit
+ Maintenance Tasks
+ 1. Database Maintenance:
+ str( (e e) )}
+ }" ") )
+ limit) )
+python Copy
+ def
+ def  database_maintenance
+ database_maintenance( () ): :
+ """Perform regular database maintenance"""
+ """Perform regular database maintenance"""
+ with
+ with db_manager
+ db_manager. .conn
+ conn: :
+ # Vacuum database to reclaim space
+ # Vacuum database to reclaim space
+ db_manager
+ db_manager. .conn
+ conn. .execute
+ execute( ("VACUUM"
+ "VACUUM") )
+ # Analyze tables for query optimization
+ # Analyze tables for query optimization
+ db_manager
+ db_manager. .conn
+ conn. .execute
+ execute( ("ANALYZE"
+ "ANALYZE") )
+ # Remove old data
+ # Remove old data
+ db_manager
+ db_manager. .conn
+ conn. .execute
+ execute( (
+ "DELETE FROM browsing_history WHERE timestamp < date('now', '-90 days')"
+ "DELETE FROM browsing_history WHERE timestamp < date('now', '-90 days')"
+ )
+ )
+ # Schedule maintenance
+ # Schedule maintenance
+ schedule
+ schedule. .every
+ every( () ). .sunday
+ 
+ sunday. .at
+ at( ("02:00"
+ "02:00") ). .do
+ do( (database_maintenance
+ database_maintenance) )
+ 2. Model Retraining:
+ 
+python Copy
+ def
+ def  retrain_models
+ retrain_models( () ): :
+ """Retrain all recommendation models"""
+ """Retrain all recommendation models"""
+ # Retrain collaborative filtering model
+ # Retrain collaborative filtering model
+ coordinator
+ coordinator. .recommendation_agent
+ recommendation_agent. .algorithms
+ algorithms[ ['collaborative'
+ 'collaborative'] ]. .train
+ # Retrain sequential model
+ # Retrain sequential model
+ coordinator
+ coordinator. .recommendation_agent
+ recommendation_agent. .algorithms
+ # Log retraining completion
+ # Log retraining completion
+ logger
+ logger. .info
+ # Schedule retraining
+ # Schedule retraining
+ schedule
+ train( (db_manager
+ db_manager) )
+ algorithms[ ['sequential'
+ 'sequential'] ]. .train
+ train( (db_manager
+ db_manager) )
+ info( ("All models retrained successfully"
+ "All models retrained successfully") )
+ schedule. .every
+ every( () ). .monday
+ monday. .at
+ Future Enhancements
+ Short-term Improvements
+ 1. A/B Testing Framework:
+ at( ("03:00"
+ "03:00") ). .do
+ do( (retrain_models
+ retrain_models) )
+ Implement automated A/B testing for recommendation algorithms
+ Measure impact of different recommendation strategies on key metrics
+ Automatically adjust algorithm weights based on test results
+ 2. Personalized Ranking:
+ Implement personalized sorting of category and search results
+ Use customer embeddings to re-rank products based on individual preferences
+ Integrate with existing search functionality
+ 3. Enhanced Context Awareness:
+Consider time of day, day of week, and seasonality
+ Incorporate weather data for relevant product categories
+ Factor in local events and holidays
+ Medium-term Enhancements
+ 1. Multi-armed Bandit Implementation:
+ Replace static algorithm selection with dynamic multi-armed bandit
+ Balance exploration vs. exploitation in recommendations
+ Continuously optimize for multiple objectives (clicks, conversion, revenue)
+ 2. Natural Language Processing:
+ Analyze product reviews for sentiment and feature extraction
+ Use customer search queries to enhance preference modeling
+ Generate personalized product descriptions
+ 3. Visual Similarity:
+ Incorporate image-based similarity for visual products
+ Generate embeddings from product images using convolutional neural networks
+ Recommend products with similar visual attributes
+ Long-term Vision
+ 1. Reinforcement Learning Framework:
+ Model recommendation system as a reinforcement learning problem
+ Define states (customer context), actions (recommendations), and rewards (purchases)
+ Train agents to maximize long-term customer value
+ 2. Explainable AI Components:
+ Provide natural language explanations for recommendations
+Visualize customer preference models for business intelligence
+ Enable manual override and adjustment of recommendation factors
+ 3. Real-time Personalization:
+ Incorporate real-time signals (click patterns, dwell time)
+ Adjust recommendations during active sessions
+ Implement progressive profiling for first-time visitors
+ Code Examples for Implementation
+ Complete Database Manager Implementation
+import import sqlite3 sqlite3
+ import import numpy  numpy as as np np
+ import import json json
+ import import time time
+ from from datetime  datetime import import datetime datetime
+ class class  DatabaseManager DatabaseManager: :
+        def def  __init__ __init__( (self self, , db_path db_path= ='ecommerce.db' 'ecommerce.db') ): :
+        self        self. .db_path db_path = = db_path db_path
+        self        self. .conn conn = = sqlite3 sqlite3. .connect connect( (db_path db_path, , check_same_thread check_same_thread= =False False) )
+        self        self. .conn conn. .row_factory row_factory = = sqlite3 sqlite3. .Row Row
+                
+        def def  setup_database setup_database( (self self) ): :
+                """Create all necessary tables if they don't exist.""" """Create all necessary tables if they don't exist."""
+                with with self self. .conn conn: :
+                        # Create customers table # Create customers table
+            self            self. .conn conn. .execute execute( (''' '''
+            CREATE TABLE IF NOT EXISTS customers (            CREATE TABLE IF NOT EXISTS customers (
+                customer_id INTEGER PRIMARY KEY,                customer_id INTEGER PRIMARY KEY,
+                name TEXT,                 name TEXT, 
+                email TEXT UNIQUE,                email TEXT UNIQUE,
+                demographics JSON,                demographics JSON,
+                registration_date TIMESTAMP,                registration_date TIMESTAMP,
+                last_active TIMESTAMP                last_active TIMESTAMP
+            )            )
+            '''            ''') )
+                        
+                        # Create products table # Create products table
+            self            self. .conn conn. .execute execute( (''' '''
+            CREATE TABLE IF NOT EXISTS products (            CREATE TABLE IF NOT EXISTS products (
+ python Copy
+                product_id INTEGER PRIMARY KEY,                product_id INTEGER PRIMARY KEY,
+                name TEXT,                name TEXT,
+                description TEXT,                description TEXT,
+                category TEXT,                category TEXT,
+                subcategory TEXT,                subcategory TEXT,
+                price REAL,                price REAL,
+                attributes JSON,                attributes JSON,
+                tags TEXT,                tags TEXT,
+                image_urls JSON,                image_urls JSON,
+                inventory_status TEXT                inventory_status TEXT
+            )            )
+            '''            ''') )
+                        
+                        # Create browsing_history table # Create browsing_history table
+            self            self. .conn conn. .execute execute( (''' '''
+            CREATE TABLE IF NOT EXISTS browsing_history (            CREATE TABLE IF NOT EXISTS browsing_history (
+                id INTEGER PRIMARY KEY,                id INTEGER PRIMARY KEY,
+                customer_id INTEGER,                customer_id INTEGER,
+                product_id INTEGER,                product_id INTEGER,
+                view_time TIMESTAMP,                view_time TIMESTAMP,
+                duration_seconds INTEGER,                duration_seconds INTEGER,
+                page_actions JSON,                page_actions JSON,
+                FOREIGN KEY (customer_id) REFERENCES customers(customer_id),                FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
+                FOREIGN KEY (product_id) REFERENCES products(product_id)                FOREIGN KEY (product_id) REFERENCES products(product_id)
+            )            )
+            '''            ''') )
+                        
+                        # Create purchases table # Create purchases table
+            self            self. .conn conn. .execute execute( (''' '''
+            CREATE TABLE IF NOT EXISTS purchases (            CREATE TABLE IF NOT EXISTS purchases (
+                purchase_id INTEGER PRIMARY KEY,                purchase_id INTEGER PRIMARY KEY,
+                customer_id INTEGER,                customer_id INTEGER,
+                timestamp TIMESTAMP,                timestamp TIMESTAMP,
+                total_amount REAL,                total_amount REAL,
+                items JSON,                items JSON,
+                FOREIGN KEY (customer_id) REFERENCES customers(customer_id)                FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+            )            )
+            '''            ''') )
+                        
+                        # Create recommendations table # Create recommendations table
+            self            self. .conn conn. .execute execute( (''' '''
+            CREATE TABLE IF NOT EXISTS recommendations (            CREATE TABLE IF NOT EXISTS recommendations (
+                id INTEGER PRIMARY KEY,                id INTEGER PRIMARY KEY,
+                customer_id INTEGER,                customer_id INTEGER,
+                product_id INTEGER,                product_id INTEGER,
+                score REAL,                score REAL,
+                algorithm TEXT,                algorithm TEXT,
+                generated_at TIMESTAMP,                generated_at TIMESTAMP,
+                was_shown BOOLEAN DEFAULT 0,                was_shown BOOLEAN DEFAULT 0,
+                was_clicked BOOLEAN DEFAULT 0,                was_clicked BOOLEAN DEFAULT 0,
+                was_purchased BOOLEAN DEFAULT 0,                was_purchased BOOLEAN DEFAULT 0,
+                FOREIGN KEY (customer_id) REFERENCES customers(customer_id),                FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
+                FOREIGN KEY (product_id) REFERENCES products(product_id)                FOREIGN KEY (product_id) REFERENCES products(product_id)
+            )            )
+            '''            ''') )
+                        
+                        # Create embeddings tables # Create embeddings tables
+            self            self. .conn conn. .execute execute( (''' '''
+            CREATE TABLE IF NOT EXISTS customer_embeddings (            CREATE TABLE IF NOT EXISTS customer_embeddings (
+                customer_id INTEGER PRIMARY KEY,                customer_id INTEGER PRIMARY KEY,
+                embedding BLOB,                embedding BLOB,
+                last_updated TIMESTAMP,                last_updated TIMESTAMP,
+                FOREIGN KEY (customer_id) REFERENCES customers(customer_id)                FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+            )            )
+            '''            ''') )
+                        
+            self            self. .conn conn. .execute execute( (''' '''
+            CREATE TABLE IF NOT EXISTS product_embeddings (            CREATE TABLE IF NOT EXISTS product_embeddings (
+                product_id INTEGER PRIMARY KEY,                product_id INTEGER PRIMARY KEY,
+                embedding BLOB,                embedding BLOB,
+                last_updated TIMESTAMP,                last_updated TIMESTAMP,
+                FOREIGN KEY (product_id) REFERENCES products(product_id)                FOREIGN KEY (product_id) REFERENCES products(product_id)
+            )            )
+            '''            ''') )
+                        
+                        # Create cart_items table # Create cart_items table
+            self            self. .conn conn. .execute execute( (''' '''
+            CREATE TABLE IF NOT EXISTS cart_items (            CREATE TABLE IF NOT EXISTS cart_items (
+                id INTEGER PRIMARY KEY,                id INTEGER PRIMARY KEY,
+                customer_id INTEGER,                customer_id INTEGER,
+                product_id INTEGER,                product_id INTEGER,
+                quantity INTEGER,                quantity INTEGER,
+                added_timestamp TIMESTAMP,                added_timestamp TIMESTAMP,
+                purchased BOOLEAN DEFAULT 0,                purchased BOOLEAN DEFAULT 0,
+                FOREIGN KEY (customer_id) REFERENCES customers(customer_id),                FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
+                FOREIGN KEY (product_id) REFERENCES products(product_id)                FOREIGN KEY (product_id) REFERENCES products(product_id)
+            )            )
+            '''            ''') )
+                        
+                        # Create index for performance optimization # Create index for performance optimization
+            self            self. .conn conn. .execute execute( ('CREATE INDEX IF NOT EXISTS idx_browsing_customer_id ON brow 'CREATE INDEX IF NOT EXISTS idx_browsing_customer_id ON brow
+            self            self. .conn conn. .execute execute( ('CREATE INDEX IF NOT EXISTS idx_purchases_customer_id ON pur 'CREATE INDEX IF NOT EXISTS idx_purchases_customer_id ON pur
+            self            self. .conn conn. .execute execute( ('CREATE INDEX IF NOT EXISTS idx_recommendations_customer_id 'CREATE INDEX IF NOT EXISTS idx_recommendations_customer_id 
+        
+        def def  add_customer add_customer( (self self, , name name, , email email, , demographics demographics= =None None) ): :
+                """Add a new customer to the database.""" """Add a new customer to the database."""
+        now         now = = datetime datetime. .now now( () ). .isoformat isoformat( () )
+        demographics_json         demographics_json = = json json. .dumps dumps( (demographics demographics) )  if if demographics  demographics else else  '{}' '{}'
+                
+                with with self self. .conn conn: :
+            cursor             cursor = = self self. .conn conn. .execute execute( (
+                                ''' '''
+                INSERT INTO customers (name, email, demographics, registration_date, last_                INSERT INTO customers (name, email, demographics, registration_date, last_
+                VALUES (?, ?, ?, ?, ?)                VALUES (?, ?, ?, ?, ?)
+                RETURNING customer_id                RETURNING customer_id
+                '''                ''', ,
+                                ( (name name, , email email, , demographics_json demographics_json, , now now, , now now) )
+                        ) )
+                        return return cursor cursor. .fetchone fetchone( () )[ [0 0] ]
+        
+        def def  add_product add_product( (self self, , name name, , description description, , category category, , subcategory subcategory, , price price, , attributes attributes= =None None
+                """Add a new product to the database.""" """Add a new product to the database."""
+        attributes_json         attributes_json = = json json. .dumps dumps( (attributes attributes) )  if if attributes  attributes else else  '{}' '{}'
+        image_urls_json         image_urls_json = = json json. .dumps dumps( (image_urls image_urls) )  if if image_urls  image_urls else else  '[]' '[]'
+                
+                with with self self. .conn conn: :
+            cursor             cursor = = self self. .conn conn. .execute execute( (
+                                ''' '''
+                INSERT INTO products (name, description, category, subcategory, price, att                INSERT INTO products (name, description, category, subcategory, price, att
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                RETURNING product_id                RETURNING product_id
+                '''                ''', ,
+                                ( (name name, , description description, , category category, , subcategory subcategory, , price price, , attributes_json attributes_json, , tags tags, , i i
+                        ) )
+                        return return cursor cursor. .fetchone fetchone( () )[ [0 0] ]
+        
+        def def  log_browsing_event log_browsing_event( (self self, , customer_id customer_id, , product_id product_id, , duration_seconds duration_seconds, , page_actions page_actions= =N N
+                """Record a product browsing event.""" """Record a product browsing event."""
+        now         now = = datetime datetime. .now now( () ). .isoformat isoformat( () )
+        page_actions_json         page_actions_json = = json json. .dumps dumps( (page_actions page_actions) )  if if page_actions  page_actions else else  '{}' '{}'
+                
+                with with self self. .conn conn: :
+            self            self. .conn conn. .execute execute( (
+                                ''' '''
+                INSERT INTO browsing_history (customer_id, product_id, view_time, duration                INSERT INTO browsing_history (customer_id, product_id, view_time, duration
+                VALUES (?, ?, ?, ?, ?)                VALUES (?, ?, ?, ?, ?)
+                '''                ''', ,
+                                ( (customer_id customer_id, , product_id product_id, , now now, , duration_seconds duration_seconds, , page_actions_json page_actions_json) )
+                        ) )
+                        
+                        # Update customer last_active # Update customer last_active
+            self            self. .conn conn. .execute execute( (
+                                'UPDATE customers SET last_active = ? WHERE customer_id = ?' 'UPDATE customers SET last_active = ? WHERE customer_id = ?', ,
+                                ( (now now, , customer_id customer_id) )
+                        ) )
+        
+        def def  log_purchase log_purchase( (self self, , customer_id customer_id, , items items, , total_amount total_amount) ): :
+                """Record a customer purchase.""" """Record a customer purchase."""
+        now         now = = datetime datetime. .now now( () ). .isoformat isoformat( () )
+        items_json         items_json = = json json. .dumps dumps( (items items) )
+                
+                with with self self. .conn conn: :
+                        # Insert purchase record # Insert purchase record
+            cursor             cursor = = self self. .conn conn. .execute execute( (
+                                ''' '''
+                INSERT INTO purchases (customer_id, timestamp, total_amount, items)                INSERT INTO purchases (customer_id, timestamp, total_amount, items)
+                VALUES (?, ?, ?, ?)                VALUES (?, ?, ?, ?)
+                RETURNING purchase_id                RETURNING purchase_id
+                '''                ''', ,
+                                ( (customer_id customer_id, , now now, , total_amount total_amount, , items_json items_json) )
+                        ) )
+            purchase_id             purchase_id = = cursor cursor. .fetchone fetchone( () )[ [0 0] ]
+                        
+                        # Update customer last_active # Update customer last_active
+            self            self. .conn conn. .execute execute( (
+                                'UPDATE customers SET last_active = ? WHERE customer_id = ?' 'UPDATE customers SET last_active = ? WHERE customer_id = ?', ,
+                                ( (now now, , customer_id customer_id) )
+                        ) )
+                        
+                        # Update cart items as purchased # Update cart items as purchased
+            self            self. .conn conn. .execute execute( (
+                                'UPDATE cart_items SET purchased = 1 WHERE customer_id = ?' 'UPDATE cart_items SET purchased = 1 WHERE customer_id = ?', ,
+                                ( (customer_id customer_id, ,) )
+                        ) )
+                        
+                        # Update any recommendations that were purchased # Update any recommendations that were purchased
+                        for for item  item in in items items: :
+                product_id                 product_id = = item item[ ['product_id' 'product_id'] ]
+                self                self. .conn conn. .execute execute( (
+                                        ''' '''
+                    UPDATE recommendations                     UPDATE recommendations 
+                    SET was_purchased = 1                     SET was_purchased = 1 
+                    WHERE customer_id = ? AND product_id = ? AND was_clicked = 1                    WHERE customer_id = ? AND product_id = ? AND was_clicked = 1
+                    '''                    ''', ,
+                                        ( (customer_id customer_id, , product_id product_id) )
+                                ) )
+                        
+                        return return purchase_id purchase_id
+        
+        def def  update_customer_embedding update_customer_embedding( (self self, , customer_id customer_id, , embedding embedding) ): :
+                """Update the vector representation of a customer.""" """Update the vector representation of a customer."""
+        now         now = = datetime datetime. .now now( () ). .isoformat isoformat( () )
+        embedding_blob         embedding_blob = = embedding embedding. .tobytes tobytes( () )
+                
+                with with self self. .conn conn: :
+                        # Check if embedding exists # Check if embedding exists
+            cursor             cursor = = self self. .conn conn. .execute execute( (
+                                'SELECT 1 FROM customer_embeddings WHERE customer_id = ?' 'SELECT 1 FROM customer_embeddings WHERE customer_id = ?', ,
+                                ( (customer_id customer_id, ,) )
+                        ) )
+            exists             exists = = cursor cursor. .fetchone fetchone( () )  is is  not not  None None
+                        
+                        if if exists exists: :
+                self                self. .conn conn. .execute execute( (
+                                        ''' '''
+                    UPDATE customer_embeddings                     UPDATE customer_embeddings 
+                    SET embedding = ?, last_updated = ?                     SET embedding = ?, last_updated = ? 
+                    WHERE customer_id = ?                    WHERE customer_id = ?
+                    '''                    ''', ,
+                                        ( (embedding_blob embedding_blob, , now now, , customer_id customer_id) )
+                                ) )
+                        else else: :
+                self                self. .conn conn. .execute execute( (
+                                        ''' '''
+                    INSERT INTO customer_embeddings (customer_id, embedding, last_updated)                    INSERT INTO customer_embeddings (customer_id, embedding, last_updated)
+                    VALUES (?, ?, ?)                    VALUES (?, ?, ?)
+                    '''                    ''', ,
+                                        ( (customer_id customer_id, , embedding_blob embedding_blob, , now now) )
+                                ) )
+        
+        def def  update_product_embedding update_product_embedding( (self self, , product_id product_id, , embedding embedding) ): :
+                """Update the vector representation of a product.""" """Update the vector representation of a product."""
+        now         now = = datetime datetime. .now now( () ). .isoformat isoformat( () )
+        embedding_blob         embedding_blob = = embedding embedding. .tobytes tobytes( () )
+                
+                with with self self. .conn conn: :
+                        # Check if embedding exists # Check if embedding exists
+            cursor             cursor = = self self. .conn conn. .execute execute( (
+                                'SELECT 1 FROM product_embeddings WHERE product_id = ?' 'SELECT 1 FROM product_embeddings WHERE product_id = ?', ,
+                                ( (product_id product_id, ,) )
+                        ) )
+            exists             exists = = cursor cursor. .fetchone fetchone( () )  is is  not not  None None
+                        
+                        if if exists exists: :
+                self                self. .conn conn. .execute execute( (
+                                        ''' '''
+                    UPDATE product_embeddings                     UPDATE product_embeddings 
+                    SET embedding = ?, last_updated = ?                     SET embedding = ?, last_updated = ? 
+                    WHERE product_id = ?                    WHERE product_id = ?
+                    '''                    ''', ,
+                                        ( (embedding_blob embedding_blob, , now now, , product_id product_id) )
+                                ) )
+                        else else: :
+                self                self. .conn conn. .execute execute( (
+                                        ''' '''
+                    INSERT INTO product_embeddings (product_id, embedding, last_updated)                    INSERT INTO product_embeddings (product_id, embedding, last_updated)
+                    VALUES (?, ?, ?)                    VALUES (?, ?, ?)
+                    '''                    ''', ,
+                                        ( (product_id product_id, , embedding_blob embedding_blob, , now now) )
+                                ) )
+        
+        def def  get_customer_profile get_customer_profile( (self self, , customer_id customer_id) ): :
+                """Get complete customer profile with history and preferences.""" """Get complete customer profile with history and preferences."""
+                # Get customer data # Get customer data
+        cursor         cursor = = self self. .conn conn. .execute execute( (
+                        'SELECT * FROM customers WHERE customer_id = ?' 'SELECT * FROM customers WHERE customer_id = ?', ,
+                        ( (customer_id customer_id, ,) )
+                ) )
+        customer         customer = =  dict dict( (cursor cursor. .fetchone fetchone( () )) )
+        customer        customer[ ['demographics' 'demographics'] ]  = = json json. .loads loads( (customer customer[ ['demographics' 'demographics'] ]) )
+                
+                # Get browsing history # Get browsing history
+        cursor         cursor = = self self. .conn conn. .execute execute( (
+                        ''' '''
+            SELECT b.*, p.name, p.category, p.price             SELECT b.*, p.name, p.category, p.price 
+            FROM browsing_history b            FROM browsing_history b
+            JOIN products p ON b.product_id = p.product_id            JOIN products p ON b.product_id = p.product_id
+            WHERE b.customer_id = ?            WHERE b.customer_id = ?
+            ORDER BY b.view_time DESC            ORDER BY b.view_time DESC
+            LIMIT 100            LIMIT 100
+            '''            ''', ,
+                        ( (customer_id customer_id, ,) )
+                ) )
+        browsing_history         browsing_history = =  [ [dict dict( (row row) )  for for row  row in in cursor cursor. .fetchall fetchall( () )] ]
+                for for item  item in in browsing_history browsing_history: :
+                        if if  'page_actions' 'page_actions'  in in item item: :
+                item                item[ ['page_actions' 'page_actions'] ]  = = json json. .loads loads( (item item[ ['page_actions' 'page_actions'] ]) )
+                
+                # Get purchase history # Get purchase history
+        cursor         cursor = = self self. .conn conn. .execute execute( (
+                        'SELECT * FROM purchases WHERE customer_id = ? ORDER BY timestamp DESC' 'SELECT * FROM purchases WHERE customer_id = ? ORDER BY timestamp DESC', ,
+                        ( (customer_id customer_id, ,) )
+                ) )
+        purchase_history         purchase_history = =  [ [dict dict( (row row) )  for for row  row in in cursor cursor. .fetchall fetchall( () )] ]
+                for for purchase  purchase in in purchase_history purchase_history: :
+            purchase            purchase[ ['items' 'items'] ]  = = json json. .loads loads( (purchase purchase[ ['items' 'items'] ]) )
+                
+                # Get cart items # Get cart items
+        cursor         cursor = = self self. .conn conn. .execute execute( (
+                        ''' '''
+            SELECT c.*, p.name, p.price            SELECT c.*, p.name, p.price
+            FROM cart_items c            FROM cart_items c
+            JOIN products p ON c.product_id = p.product_id            JOIN products p ON c.product_id = p.product_id
+            WHERE c.customer_id = ? AND c.purchased = 0            WHERE c.customer_id = ? AND c.purchased = 0
+            '''            ''', ,
+                        ( (customer_id customer_id, ,) )
+                ) )
+        cart_items         cart_items = =  [ [dict dict( (row row) )  for for row  row in in cursor cursor. .fetchall fetchall( () )] ]
+                
+                # Get customer embedding # Get customer embedding
+        cursor         cursor = = self self. .conn conn. .execute execute( (
+                        'SELECT embedding FROM customer_embeddings WHERE customer_id = ?' 'SELECT embedding FROM customer_embeddings WHERE customer_id = ?', ,
+                        ( (customer_id customer_id, ,) )
+                ) )
+        embedding_row         embedding_row = = cursor cursor. .fetchone fetchone( () )
+        embedding         embedding = =  None None
+                if if embedding_row embedding_row: :
+            embedding             embedding = = np np. .frombuffer frombuffer( (embedding_row embedding_row[ [0 0] ]) )
+                
+                # Combine all data # Combine all data
+        profile         profile = =  { {
+                        'customer_data' 'customer_data': : customer customer, ,
+                        'browsing_history' 'browsing_history': : browsing_history browsing_history, ,
+                        'purchase_history' 'purchase_history': : purchase_history purchase_history, ,
+                        'cart_items' 'cart_items': : cart_items cart_items, ,
+                        'embedding' 'embedding': : embedding embedding
+                } }
+                
+                return return profile profile
+        
+        def def  log_recommendations log_recommendations( (self self, , customer_id customer_id, , recommendations recommendations, , algorithm algorithm) ): :
+                """Record recommendations made to a customer.""" """Record recommendations made to a customer."""
+        now         now = = datetime datetime. .now now( () ). .isoformat isoformat( () )
+                
+                with with self self. .conn conn: :
+            recommendation_ids             recommendation_ids = =  [ [] ]
+                        for for rec  rec in in recommendations recommendations: :
+                cursor                 cursor = = self self. .conn conn. .execute execute( (
+                                        ''' '''
+                    INSERT INTO recommendations                     INSERT INTO recommendations 
+                    (customer_id, product_id, score, algorithm, generated_at)                    (customer_id, product_id, score, algorithm, generated_at)
+                    VALUES (?, ?, ?, ?, ?)                    VALUES (?, ?, ?, ?, ?)
+                    RETURNING id                    RETURNING id
+                    '''                    ''', ,
+                                        ( (customer_id customer_id, , rec rec[ ['product_id' 'product_id'] ], , rec rec[ ['score' 'score'] ], , algorithm algorithm, , now now) )
+                                ) )
+                recommendation_ids                recommendation_ids. .append append( (cursor cursor. .fetchone fetchone( () )[ [0 0] ]) )
+                
+                return return recommendation_ids recommendation_ids
+        
+        def def  update_recommendation_feedback update_recommendation_feedback( (self self, , recommendation_id recommendation_id, , clicked clicked= =False False, , purchased purchased= =F F
+                """Update whether a recommendation was clicked or led to purchase.""" """Update whether a recommendation was clicked or led to purchase."""
+                with with self self. .conn conn: :
+            updates             updates = =  [ [] ]
+            params             params = =  [ [] ]
+                        
+                        if if clicked clicked: :
+                updates                updates. .append append( ("was_clicked = ?" "was_clicked = ?") )
+                params                params. .append append( (1 1) )
+                        if if purchased purchased: :
+                updates                updates. .append append( ("was_purchased = ?" "was_purchased = ?") )
+                params                params. .append append( (1 1) )
+                        
+                        if if updates updates: :
+                sql                 sql = =  f"UPDATE recommendations SET f"UPDATE recommendations SET { {', ' ', '. .join join( (updates updates) )} } WHERE id = ?" WHERE id = ?"
+                params                params. .append append( (recommendation_id recommendation_id) )
+                self                self. .conn conn. .execute execute( (sql sql, , params params) )
+                                
+        def def  mark_recommendations_shown mark_recommendations_shown( (self self, , recommendation_ids recommendation_ids) ): :
+                """Mark recommendations as shown to the customer.""" """Mark recommendations as shown to the customer."""
+                if if  not not recommendation_ids recommendation_ids: :
+                        return return
+                        
+                with with self self. .conn conn: :
+            ids_string             ids_string = =  ',' ','. .join join( ('?' '?'  for for _  _ in in recommendation_ids recommendation_ids) )
+            self            self. .conn conn. .execute execute( (
+                                f'UPDATE recommendations SET was_shown = 1 WHERE id IN ( f'UPDATE recommendations SET was_shown = 1 WHERE id IN ({ {ids_string ids_string} })' )', ,
+                recommendation_ids                recommendation_ids
+                        ) )
+        
+        def def  get_product get_product( (self self, , product_id product_id) ): :
+                """Get product details.""" """Get product details."""
+        cursor         cursor = = self self. .conn conn. .execute execute( (
+                        'SELECT * FROM products WHERE product_id = ?' 'SELECT * FROM products WHERE product_id = ?', ,
+                        ( (product_id product_id, ,) )
+                ) )
+        product         product = =  dict dict( (cursor cursor. .fetchone fetchone( () )) )
+        product        product[ ['attributes' 'attributes'] ]  = = json json. .loads loads( (product product[ ['attributes' 'attributes'] ]) )
+        product        product[ ['image_urls' 'image_urls'] ]  = = json json. .loads loads( (product product[ ['image_urls' 'image_urls'] ]) )
+                
+                return return product product
+        
+        def def  get_similar_products get_similar_products( (self self, , product_id product_id, , limit limit= =10 10) ): :
+                """Find similar products based on embeddings.""" """Find similar products based on embeddings."""
+                # Get product embedding # Get product embedding
+        cursor         cursor = = self self. .conn conn. .execute execute( (
+                        'SELECT embedding FROM product_embeddings WHERE product_id = ?' 'SELECT embedding FROM product_embeddings WHERE product_id = ?', ,
+                        ( (product_id product_id, ,) )
+                ) )
+        embedding_row         embedding_row = = cursor cursor. .fetchone fetchone( () )
+                if if  not not embedding_row embedding_row: :
+                        return return  [ [] ]
+                        
+        target_embedding         target_embedding = = np np. .frombuffer frombuffer( (embedding_row embedding_row[ [0 0] ]) )
+                
+                # Get all product embeddings # Get all product embeddings
+        cursor         cursor = = self self. .conn conn. .execute execute( (
+                        ''' '''
+            SELECT p.product_id, p.name, p.category, p.price, p.image_urls, pe.embedding            SELECT p.product_id, p.name, p.category, p.price, p.image_urls, pe.embedding
+            FROM product_embeddings pe            FROM product_embeddings pe
+            JOIN products p ON pe.product_id = p.product_id            JOIN products p ON pe.product_id = p.product_id
+            WHERE p.product_id != ?            WHERE p.product_id != ?
+            '''            ''', ,
+                        ( (product_id product_id, ,) )
+                ) )
+                
+        products         products = =  [ [] ]
+                for for row  row in in cursor cursor: :
+            product             product = =  dict dict( (row row) )
+            embedding             embedding = = np np. .frombuffer frombuffer( (product product. .pop pop( ('embedding' 'embedding') )) )
+                        
+                        # Calculate cosine similarity # Calculate cosine similarity
+            similarity             similarity = = np np. .dot dot( (target_embedding target_embedding, , embedding embedding) )  / /  ( (
+                np                np. .linalg linalg. .norm norm( (target_embedding target_embedding) )  * * np np. .linalg linalg. .norm norm( (embedding embedding) )
+                        ) )
+                        
+            product            product[ ['similarity' 'similarity'] ]  = =  float float( (similarity similarity) )
+            product            product[ ['image_urls' 'image_urls'] ]  = = json json. .loads loads( (product product[ ['image_urls' 'image_urls'] ]) )
+            products            products. .append append( (product product) )
+                
+                # Sort by similarity and return top results # Sort by similarity and return top results
+        products        products. .sort sort( (key key= =lambda lambda x x: : x x[ ['similarity' 'similarity'] ], , reverse reverse= =True True) )
+                return return products products[ [: :limit limit] ]
+        
+        def def  get_all_product_embeddings get_all_product_embeddings( (self self) ): :
+                """Get all product embeddings.""" """Get all product embeddings."""
+        cursor         cursor = = self self. .conn conn. .execute execute( (
+                        'SELECT product_id, embedding FROM product_embeddings' 'SELECT product_id, embedding FROM product_embeddings'
+                ) )
+                
+        embeddings         embeddings = =  { {} }
+                for for row  row in in cursor cursor: :
+            product_id             product_id = = row row[ [0 0] ]
+            embedding             embedding = = np np. .frombuffer frombuffer( (row row[ [1 1] ]) )
+            embeddings            embeddings[ [product_id product_id] ]  = = embedding embedding
+                        
+                return return embeddings embeddings
+        
+        def def  get_popular_products get_popular_products( (self self, , category category= =None None, , limit limit= =10 10) ): :
+                """Get popular products based on view and purchase counts.""" """Get popular products based on view and purchase counts."""
+                if if category category: :
+            sql             sql = =  ''' '''
+            SELECT             SELECT 
+                p.product_id,                p.product_id,
+                p.name,                p.name,
+                p.category,                p.category,
+                p.price,                p.price,
+                p.image_urls,                p.image_urls,
+                COUNT(DISTINCT b.id) as view_count,                COUNT(DISTINCT b.id) as view_count,
+                COUNT(DISTINCT pur.purchase_id) as purchase_count                COUNT(DISTINCT pur.purchase_id) as purchase_count
+            FROM products p            FROM products p
+            LEFT JOIN browsing_history b ON p.product_id = b.product_id            LEFT JOIN browsing_history b ON p.product_id = b.product_id
+            LEFT JOIN purchases pur ON pur.items LIKE '%' || p.product_id || '%'            LEFT JOIN purchases pur ON pur.items LIKE '%' || p.product_id || '%'
+            WHERE p.category = ?            WHERE p.category = ?
+            GROUP BY p.product_id            GROUP BY p.product_id
+            ORDER BY (view_count + purchase_count * 5) DESC            ORDER BY (view_count + purchase_count * 5) DESC
+            LIMIT ?            LIMIT ?
+            '''            '''
+            cursor             cursor = = self self. .conn conn. .execute execute( (sql sql, ,  ( (category category, , limit limit) )) )
+                else else: :
+            sql             sql = =  ''' '''
+            SELECT             SELECT 
+                p.product_id,                p.product_id,
+                p.name,                p.name,
+                p.category,                p.category,
+                p.price,                p.price,
+                p.image_urls,                p.image_urls,
+                COUNT(DISTINCT b.id) as view_count,                COUNT(DISTINCT b.id) as view_count,
+                COUNT(DISTINCT pur.purchase_id) as purchase_count                COUNT(DISTINCT pur.purchase_id) as purchase_count
+            FROM products p            FROM products p
+            LEFT JOIN browsing_history b ON p.product_id = b.product_id            LEFT JOIN browsing_history b ON p.product_id = b.product_id
+            LEFT JOIN purchases pur ON pur.items LIKE '%' || p.product_id || '%'            LEFT JOIN purchases pur ON pur.items LIKE '%' || p.product_id || '%'
+            GROUP BY p.product_id            GROUP BY p.product_id
+            ORDER BY (view_count + purchase_count * 5) DESC            ORDER BY (view_count + purchase_count * 5) DESC
+            LIMIT ?            LIMIT ?
+            '''            '''
+            cursor             cursor = = self self. .conn conn. .execute execute( (sql sql, ,  ( (limit limit, ,) )) )
+                
+        popular_products         popular_products = =  [ [] ]
+                for for row  row in in cursor cursor: :
+            product             product = =  dict dict( (row row) )
+            product            product[ ['image_urls' 'image_urls'] ]  = = json json. .loads loads( (product product[ ['image_urls' 'image_urls'] ]) )
+            popular_products            popular_products. .append append( (product product) )
+                        
+                return return popular_products popular_products
+        
+        def def  close close( (self self) ): :
+                """Close the database connection.""" """Close the database connection."""
+        self        self. .conn conn. .close close( () )

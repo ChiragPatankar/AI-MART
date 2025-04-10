@@ -1,0 +1,58 @@
+AI-MART Project Structure Overview
+
+1. Frontend (React + Redux)
+   - Pages/
+     - Recommendations.js: Main recommendations page with algorithm selection and product display
+     - Cart.js: Shopping cart management
+     - Products.js: Product listing and search
+     - Admin.js: Admin dashboard for system statistics
+   
+   - Store/
+     - slices/
+       - userSlice.js: User authentication and profile management
+       - cartSlice.js: Shopping cart state management
+       - recommendationsSlice.js: Recommendation state and actions
+     - index.js: Redux store configuration
+
+   - Services/
+     - api.js: API service for backend communication
+
+2. Backend (FastAPI)
+   - src/
+     - api/
+       - main.py: Main FastAPI application and routes
+       - cart.py: Cart-related endpoints
+       - recommendations.py: Recommendation endpoints
+     
+     - agents/
+       - recommendation_agent.py: Recommendation generation logic
+       - cart_agent.py: Cart management logic
+       - base_agent.py: Base agent class
+     
+     - algorithms/
+       - hybrid_approach.py: Hybrid recommendation algorithm
+       - collaborative_filtering.py: Collaborative filtering
+       - content_based_filtering.py: Content-based filtering
+       - sequential_pattern_mining.py: Sequential pattern mining
+       - base_recommendation.py: Base recommendation algorithm
+     
+     - database/
+       - models.py: SQLAlchemy models
+       - database_manager.py: Database operations
+
+3. Key Features
+   - Multiple recommendation algorithms (Hybrid, Collaborative, Content-based, Sequential)
+   - Real-time cart-based recommendations
+   - Confidence score calculations
+   - Detailed recommendation explanations
+   - Admin dashboard for system monitoring
+   - User authentication and profile management
+   - Shopping cart functionality
+
+4. Data Flow
+   - Frontend -> API -> Agents -> Algorithms -> Database
+   - Recommendations generated based on:
+     - User profile
+     - Cart contents
+     - Product features
+     - Historical data 
